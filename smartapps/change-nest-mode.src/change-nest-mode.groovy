@@ -10,7 +10,7 @@
 
 definition(
     name:        "Change Nest Mode",
-    namespace:   "imbrianj",
+    namespace:   "DiegoAntonino",
     author:      "brian@bevey.org",
     description: "Simply marks any thermostat HOME/ AWAY ",
     category:    "Green Living",
