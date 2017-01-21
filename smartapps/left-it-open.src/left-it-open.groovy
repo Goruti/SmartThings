@@ -17,7 +17,7 @@
  */
 definition(
     name: "Left It Open",
-    namespace: "smartthings",
+    namespace: "DiegoAntonino",
     author: "SmartThings",
     description: "Notifies you when you have left a door or window open longer that a specified amount of time.",
     category: "Convenience",
