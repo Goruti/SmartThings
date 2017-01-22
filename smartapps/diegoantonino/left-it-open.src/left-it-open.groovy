@@ -145,8 +145,8 @@ def doorOpen(evt)
 
 def doorOpenTooLong() {
 	def contactState = contact.currentState("contact")
-    log.debug "ContactStateValue: ", contactState.value
-    log.debug "TimeSinceDoorIsOpen: ", contactState.rawDateCreated.time
+    log.debug "ContactStateValue:  $contactState.value"
+    log.debug "TimeSinceDoorIsOpen:  $contactState.rawDateCreated.time"
 
 
     def freq = (frequency != null && frequency != "") ? frequency * 60 : 300
