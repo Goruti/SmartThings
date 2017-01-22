@@ -92,9 +92,11 @@ def appTouchHandler(evt){
     def msg = "Test message for Sonos"
     log.debug "msg = ${msg}"
     state.sound = textToSpeech(msg)
-    sonos.playTrack(state.sound.uri)
 
-}
+    //sonos.playTrack(state.sound.uri)
+    //sonos.playSoundAndTrack(state.sound.uri, state.sound.duration, state.selectedSong, volume)
+    //sonos.playTrackAndResume(state.sound.uri, state.sound.duration, volume)
+    sonos.playTrackAtVolume(state.sound.uri, volume)
 
 def doorOpen(evt)
 {
