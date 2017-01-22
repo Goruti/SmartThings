@@ -64,54 +64,6 @@ def chooseTrack() {
     }
 }
 
-private songOptions() {
-
-    // Make sure current selection is in the set
-
-    def options = new LinkedHashSet()
-    if (state.selectedSong?.station) {
-        options << state.selectedSong.station
-    }
-    else if (state.selectedSong?.description) {
-        // TODO - Remove eventually? 'description' for backward compatibility
-        options << state.selectedSong.description
-    }
-
-    // Query for recent tracks
-    def states = sonos.statesSince("trackData", new Date(0), [max:30])
-    def dataMaps = states.collect{it.jsonValue}
-    options.addAll(dataMaps.collect{it.station})
-
-    log.trace "${options.size()} songs in list"
-    options.take(20) as List
-}
-
-private saveSelectedSong() {
-    try {
-        def thisSong = song
-        log.info "Looking for $thisSong"
-        def songs = sonos.statesSince("trackData", new Date(0), [max:30]).collect{it.jsonValue}
-        log.info "Searching ${songs.size()} records"
-
-        def data = songs.find {s -> s.station == thisSong}
-        log.info "Found ${data?.station}"
-        if (data) {
-            state.selectedSong = data
-            log.debug "Selected song = $state.selectedSong"
-        }
-        else if (song == state.selectedSong?.station) {
-            log.debug "Selected existing entry '$song', which is no longer in the last 20 list"
-        }
-        else {
-            log.warn "Selected song '$song' not found"
-        }
-    }
-    catch (Throwable t) {
-        log.error t
-    }
-}
-
-
 
 def installed() {
     log.debug "Installed with settings: ${settings}"
@@ -134,8 +86,9 @@ def subscribe() {
 
 }
 
-def appTouchHandler(){
+def appTouchHandler(evt){
 
+    log.debug "evt = ${evt}"
     msg = "Test message for Sonos"
     log.debug "msg = ${msg}"
     state.sound = textToSpeech(msg)
@@ -199,4 +152,51 @@ private loadText(){
     state.sound = textToSpeech(msg) //This generate the mp3 on \
     // StateSound = [uri:https://s3.amazonaws.com/smartapp-media/tts/0e5d6b9432d2dff1717dd1c2b6faf059f99edbad.mp3, duration:3]
 
+}
+
+private songOptions() {
+
+    // Make sure current selection is in the set
+
+    def options = new LinkedHashSet()
+    if (state.selectedSong?.station) {
+        options << state.selectedSong.station
+    }
+    else if (state.selectedSong?.description) {
+        // TODO - Remove eventually? 'description' for backward compatibility
+        options << state.selectedSong.description
+    }
+
+    // Query for recent tracks
+    def states = sonos.statesSince("trackData", new Date(0), [max:30])
+    def dataMaps = states.collect{it.jsonValue}
+    options.addAll(dataMaps.collect{it.station})
+
+    log.trace "${options.size()} songs in list"
+    options.take(20) as List
+}
+
+private saveSelectedSong() {
+    try {
+        def thisSong = song
+        log.info "Looking for $thisSong"
+        def songs = sonos.statesSince("trackData", new Date(0), [max:30]).collect{it.jsonValue}
+        log.info "Searching ${songs.size()} records"
+
+        def data = songs.find {s -> s.station == thisSong}
+        log.info "Found ${data?.station}"
+        if (data) {
+            state.selectedSong = data
+            log.debug "Selected song = $state.selectedSong"
+        }
+        else if (song == state.selectedSong?.station) {
+            log.debug "Selected existing entry '$song', which is no longer in the last 20 list"
+        }
+        else {
+            log.warn "Selected song '$song' not found"
+        }
+    }
+    catch (Throwable t) {
+        log.error t
+    }
 }
