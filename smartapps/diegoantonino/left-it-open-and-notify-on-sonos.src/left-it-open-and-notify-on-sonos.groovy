@@ -80,17 +80,17 @@ def appTouchHandler(evt){
 
     if (resumePlaying){
         def current_volume = sonos.currentState("level").value
-        def current_trackData = sonos.currentState("trackData").value
-        def current_trackDataUri = current_trackData.uri
+        def current_trackData = sonos.currentState("trackData").json
+       // def current_trackDataUri = current_trackData.uri
         log.debug "current_volume = ${current_volume}"
         log.debug "current_trackData = ${current_trackData}"
 
-        log.debug "current_trackDataUri = ${current_trackDataUri}"
+       // log.debug "current_trackDataUri = ${current_trackDataUri}"
 
         sonos.playTrack(state.sound.uri, volume)
 
 
-        sonos.restoreTrack(state.sound.uri)
+        sonos.restoreTrack(current_trackData)
 
 
 
