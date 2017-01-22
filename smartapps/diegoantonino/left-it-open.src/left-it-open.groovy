@@ -39,7 +39,7 @@ def mainPage() {
             input "openThreshold", "number", description: "Number of minutes", required: false
         }
         section("Delay between notifications (default 5 minutes") {
-            input "frequency", "number", title: "Number of minutes", description: "", required: false
+            input "frequency", "number", description: "Number of minutes", required: false
         }
         section {
             input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: true
@@ -50,6 +50,10 @@ def mainPage() {
             href "chooseTrack", title: "Or play this music or radio station", description:
                     song ? state.selectedSong?.station : "Tap to set", state: song ? "complete" : "incomplete"
             input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
+        }
+        section() {
+            label title: "Assign a name", required: false
+            mode title: "Set for specific mode(s)", required: false
         }
     }
 }
