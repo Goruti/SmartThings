@@ -74,7 +74,7 @@ def subscribe() {
 def appTouchHandler(evt){
 
     log.debug "evt = ${evt}"
-    def msg = "Test message for Sonos"
+    def msg = "Test message for $app.label"
     log.debug "msg = ${msg}"
     state.sound = textToSpeech(msg)
 
