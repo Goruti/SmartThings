@@ -125,11 +125,21 @@ def updated() {
 }
 
 def subscribe() {
+    subscribe(app, appTouchHandler)
 	subscribe(contact, "contact.open", doorOpen)
 
     if (song) {
         saveSelectedSong()
     }
+
+}
+
+def appTouchHandler(){
+
+    msg = "Test message for Sonos"
+    log.debug "msg = ${msg}"
+    state.sound = textToSpeech(msg)
+    sonos.playTrack(state.sound.uri)
 
 }
 
