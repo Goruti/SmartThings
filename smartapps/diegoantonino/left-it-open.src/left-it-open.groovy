@@ -143,9 +143,6 @@ def doorOpen(evt)
 
 def doorOpenTooLong() {
 	def contactState = contact.currentState("contact")
-    log.debug "ContactStateValue:  $contactState.value"
-    log.debug "TimeSinceDoorIsOpen:  $contactState.rawDateCreated.time"
-
 
     def freq = (frequency != null && frequency != "") ? frequency * 60 : 300
 
@@ -169,7 +166,29 @@ void sendMessage()
 	def minutes = (openThreshold != null && openThreshold != "") ? openThreshold : 5
 	def message = "${contact.displayName} has been left open for ${minutes} minutes."
 
-    state.sound = textToSpeech(message)
-	log.info msg
+    loadText()
+
+    if (song) {
+        sonos.playSoundAndTrack(state.sound.uri, state.sound.duration, state.selectedSong, volume)
+    }
+    else if (resumePlaying){
+        sonos.playTrackAndResume(state.sound.uri, state.sound.duration, volume)
+    }
+    else if (volume) {
+        sonos.playTrackAtVolume(state.sound.uri, volume)
+    }
+    else {
+        sonos.playTrack(state.sound.uri)
+    }
+
+}
+
+private loadText(){
+
+    def minutes = (openThreshold != null && openThreshold != "") ? openThreshold : 5
+    def message = "${contact.displayName} has been left open for ${minutes} minutes."
+
+    state.sound = textToSpeech(message, true)
+    log.info message
 
 }
