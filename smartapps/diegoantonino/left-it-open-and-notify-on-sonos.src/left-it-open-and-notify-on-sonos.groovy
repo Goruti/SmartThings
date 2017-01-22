@@ -27,7 +27,6 @@ definition(
 
 preferences {
 	page(name: "mainPage", title: "Play message on your speaker when a door left open", install: true, uninstall: true)
-	page(name: "chooseTrack", title: "Select a song or station")
 }
 
 def mainPage() {
@@ -46,7 +45,6 @@ def mainPage() {
         }
         section("More options", hideable: true, hidden: true) {
             input "resumePlaying", "bool", title: "Resume currently playing music after notification", required: false, defaultValue: true
-            href "chooseTrack", title: "Or play this music or radio station", description: song ? state.selectedSong?.station : "Tap to set", state: song ? "complete" : "incomplete"
             input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
         }
         section() {
@@ -55,15 +53,6 @@ def mainPage() {
         }
     }
 }
-
-def chooseTrack() {
-    dynamicPage(name: "chooseTrack") {
-        section{
-            input "song","enum",title:"Play this track", required:true, multiple: false, options: songOptions()
-        }
-    }
-}
-
 
 def installed() {
     log.debug "Installed with settings: ${settings}"
@@ -80,10 +69,6 @@ def subscribe() {
     subscribe(app, appTouchHandler)
 	subscribe(contact, "contact.open", doorOpen)
 
-    if (song) {
-        saveSelectedSong()
-    }
-
 }
 
 def appTouchHandler(evt){
@@ -93,10 +78,15 @@ def appTouchHandler(evt){
     log.debug "msg = ${msg}"
     state.sound = textToSpeech(msg)
 
-   // sonos.playSoundAndTrack(state.sound.uri, state.sound.duration, state.selectedSong, volume)
-   // sonos.playTrackAndResume(state.sound.uri, state.sound.duration, volume)
-    sonos.playTrackAtVolume(state.sound.uri, volume)
-   // sonos.playTrack(state.sound.uri)
+    if (resumePlaying){
+        sonos.playTrackAndResume(state.sound.uri, state.sound.duration, volume)
+    }
+    else if (volume) {
+        sonos.playTrackAtVolume(state.sound.uri, volume)
+    }
+    else {
+        sonos.playTrack(state.sound.uri)
+    }
 
 
 }
@@ -133,10 +123,7 @@ void sendMessage()
 {
     loadText()
 
-    if (song) {
-        sonos.playSoundAndTrack(state.sound.uri, state.sound.duration, state.selectedSong, volume)
-    }
-    else if (resumePlaying){
+    if (resumePlaying){
         sonos.playTrackAndResume(state.sound.uri, state.sound.duration, volume)
     }
     else if (volume) {
@@ -157,51 +144,4 @@ private loadText(){
     state.sound = textToSpeech(msg) //This generate the mp3 on \
     // StateSound = [uri:https://s3.amazonaws.com/smartapp-media/tts/0e5d6b9432d2dff1717dd1c2b6faf059f99edbad.mp3, duration:3]
 
-}
-
-private songOptions() {
-
-    // Make sure current selection is in the set
-
-    def options = new LinkedHashSet()
-    if (state.selectedSong?.station) {
-        options << state.selectedSong.station
-    }
-    else if (state.selectedSong?.description) {
-        // TODO - Remove eventually? 'description' for backward compatibility
-        options << state.selectedSong.description
-    }
-
-    // Query for recent tracks
-    def states = sonos.statesSince("trackData", new Date(0), [max:30])
-    def dataMaps = states.collect{it.jsonValue}
-    options.addAll(dataMaps.collect{it.station})
-
-    log.trace "${options.size()} songs in list"
-    options.take(20) as List
-}
-
-private saveSelectedSong() {
-    try {
-        def thisSong = song
-        log.info "Looking for $thisSong"
-        def songs = sonos.statesSince("trackData", new Date(0), [max:30]).collect{it.jsonValue}
-        log.info "Searching ${songs.size()} records"
-
-        def data = songs.find {s -> s.station == thisSong}
-        log.info "Found ${data?.station}"
-        if (data) {
-            state.selectedSong = data
-            log.debug "Selected song = $state.selectedSong"
-        }
-        else if (song == state.selectedSong?.station) {
-            log.debug "Selected existing entry '$song', which is no longer in the last 20 list"
-        }
-        else {
-            log.warn "Selected song '$song' not found"
-        }
-    }
-    catch (Throwable t) {
-        log.error t
-    }
 }
