@@ -26,60 +26,130 @@ definition(
 )
 
 preferences {
-
-	section("Monitor this door or window") {
-		input "contact", "capability.contactSensor"
-	}
-	section("And notify me if it's open for more than this many minutes (default 10)") {
-		input "openThreshold", "number", description: "Number of minutes", required: false
-	}
-    section("Delay between notifications (default 10 minutes") {
-        input "frequency", "number", title: "Number of minutes", description: "", required: false
-    }
-	section("Via text message at this number (or via push notification if not specified") {
-        input("recipients", "contact", title: "Send notifications to") {
-            input "phone", "phone", title: "Phone number (optional)", required: false
-        }
-	}
+	page(name: "mainPage", title: "Play message on your speaker when a door left open", install: true, uninstall: true)
+	page(name: "chooseTrack", title: "Select a song or station")
 }
 
+def mainPage() {
+    dynamicPage(name: "mainPage") {
+        section("Play message when") {
+            input "contact", "capability.contactSensor", multiple: false
+        }
+        section("And notify me if it's open for more than this many minutes (default 5)") {
+            input "openThreshold", "number", description: "Number of minutes", required: false
+        }
+        section("Delay between notifications (default 5 minutes") {
+            input "frequency", "number", title: "Number of minutes", description: "", required: false
+        }
+        section {
+            input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: true
+        }
+        section("More options", hideable: true, hidden: true) {
+            input "resumePlaying", "bool", title: "Resume currently playing music after notification", required: false,
+                    defaultValue: true
+            href "chooseTrack", title: "Or play this music or radio station", description:
+                    song ? state.selectedSong?.station : "Tap to set", state: song ? "complete" : "incomplete"
+            input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
+        }
+    }
+}
+
+def chooseTrack() {
+    dynamicPage(name: "chooseTrack") {
+        section{
+            input "song","enum",title:"Play this track", required:true, multiple: false, options: songOptions()
+        }
+    }
+}
+
+private songOptions() {
+
+    // Make sure current selection is in the set
+
+    def options = new LinkedHashSet()
+    if (state.selectedSong?.station) {
+        options << state.selectedSong.station
+    }
+    else if (state.selectedSong?.description) {
+        // TODO - Remove eventually? 'description' for backward compatibility
+        options << state.selectedSong.description
+    }
+
+    // Query for recent tracks
+    def states = sonos.statesSince("trackData", new Date(0), [max:30])
+    def dataMaps = states.collect{it.jsonValue}
+    options.addAll(dataMaps.collect{it.station})
+
+    log.trace "${options.size()} songs in list"
+    options.take(20) as List
+}
+
+private saveSelectedSong() {
+    try {
+        def thisSong = song
+        log.info "Looking for $thisSong"
+        def songs = sonos.statesSince("trackData", new Date(0), [max:30]).collect{it.jsonValue}
+        log.info "Searching ${songs.size()} records"
+
+        def data = songs.find {s -> s.station == thisSong}
+        log.info "Found ${data?.station}"
+        if (data) {
+            state.selectedSong = data
+            log.debug "Selected song = $state.selectedSong"
+        }
+        else if (song == state.selectedSong?.station) {
+            log.debug "Selected existing entry '$song', which is no longer in the last 20 list"
+        }
+        else {
+            log.warn "Selected song '$song' not found"
+        }
+    }
+    catch (Throwable t) {
+        log.error t
+    }
+}
+
+
+
 def installed() {
-	log.trace "installed()"
+    log.debug "Installed with settings: ${settings}"
 	subscribe()
 }
 
 def updated() {
-	log.trace "updated()"
+    log.debug "Updated with settings: ${settings}"
 	unsubscribe()
 	subscribe()
 }
 
 def subscribe() {
 	subscribe(contact, "contact.open", doorOpen)
-	subscribe(contact, "contact.closed", doorClosed)
+
+    if (song) {
+        saveSelectedSong()
+    }
+
 }
 
 def doorOpen(evt)
 {
 	log.trace "doorOpen($evt.name: $evt.value)"
-	def t0 = now()
-	def delay = (openThreshold != null && openThreshold != "") ? openThreshold * 60 : 600
-	runIn(delay, doorOpenTooLong, [overwrite: false])
-	log.debug "scheduled doorOpenTooLong in ${now() - t0} msec"
+	def delay = (openThreshold != null && openThreshold != "") ? openThreshold * 60 : 300
+	runIn(delay, doorOpenTooLong)
 }
 
-def doorClosed(evt)
-{
-	log.trace "doorClosed($evt.name: $evt.value)"
-}
 
 def doorOpenTooLong() {
 	def contactState = contact.currentState("contact")
-    def freq = (frequency != null && frequency != "") ? frequency * 60 : 600
+    log.debug "ContactStateValue: ", contactState.value
+    log.debug "TimeSinceDoorIsOpen: ", contactState.rawDateCreated.time
+
+
+    def freq = (frequency != null && frequency != "") ? frequency * 60 : 300
 
 	if (contactState.value == "open") {
 		def elapsed = now() - contactState.rawDateCreated.time
-		def threshold = ((openThreshold != null && openThreshold != "") ? openThreshold * 60000 : 60000) - 1000
+		def threshold = ((openThreshold != null && openThreshold != "") ? openThreshold * 60000 : 30000) - 1000
 		if (elapsed >= threshold) {
 			log.debug "Contact has stayed open long enough since last check ($elapsed ms):  calling sendMessage()"
 			sendMessage()
@@ -94,17 +164,8 @@ def doorOpenTooLong() {
 
 void sendMessage()
 {
-	def minutes = (openThreshold != null && openThreshold != "") ? openThreshold : 10
+	def minutes = (openThreshold != null && openThreshold != "") ? openThreshold : 5
 	def msg = "${contact.displayName} has been left open for ${minutes} minutes."
 	log.info msg
-    if (location.contactBookEnabled) {
-        sendNotificationToContacts(msg, recipients)
-    }
-    else {
-        if (phone) {
-            sendSms phone, msg
-        } else {
-            sendPush msg
-        }
-    }
+
 }
