@@ -79,7 +79,7 @@ def appTouchHandler(evt){
     state.sound = textToSpeech(msg)
 
     if (resumePlaying){
-        sonos.playTrackAndResume(state.sound.uri, state.sound.duration, volume)
+        sonos.playTrackAndRestore(state.sound.uri, state.sound.duration, volume)
     }
     else if (volume) {
         sonos.playTrackAtVolume(state.sound.uri, volume)
@@ -87,8 +87,6 @@ def appTouchHandler(evt){
     else {
         sonos.playTrack(state.sound.uri)
     }
-
-
 }
 
 def doorOpen(evt)
