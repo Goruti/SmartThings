@@ -45,10 +45,8 @@ def mainPage() {
             input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: true
         }
         section("More options", hideable: true, hidden: true) {
-            input "resumePlaying", "bool", title: "Resume currently playing music after notification", required: false,
-                    defaultValue: true
-            href "chooseTrack", title: "Or play this music or radio station", description:
-                    song ? state.selectedSong?.station : "Tap to set", state: song ? "complete" : "incomplete"
+            input "resumePlaying", "bool", title: "Resume currently playing music after notification", required: false, defaultValue: true
+            href "chooseTrack", title: "Or play this music or radio station", description: song ? state.selectedSong?.station : "Tap to set", state: song ? "complete" : "incomplete"
             input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
         }
         section() {
@@ -169,7 +167,9 @@ def doorOpenTooLong() {
 void sendMessage()
 {
 	def minutes = (openThreshold != null && openThreshold != "") ? openThreshold : 5
-	def msg = "${contact.displayName} has been left open for ${minutes} minutes."
+	def message = "${contact.displayName} has been left open for ${minutes} minutes."
+
+    state.sound = textToSpeech(message)
 	log.info msg
 
 }
