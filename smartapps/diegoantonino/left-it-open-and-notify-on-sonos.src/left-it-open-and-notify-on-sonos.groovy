@@ -89,7 +89,7 @@ def subscribe() {
 def appTouchHandler(evt){
 
     log.debug "evt = ${evt}"
-    msg = "Test message for Sonos"
+    def msg = "Test message for Sonos"
     log.debug "msg = ${msg}"
     state.sound = textToSpeech(msg)
     sonos.playTrack(state.sound.uri)
