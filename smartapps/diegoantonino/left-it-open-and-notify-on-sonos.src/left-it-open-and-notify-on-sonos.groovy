@@ -47,9 +47,11 @@ def mainPage() {
             input "resumePlaying", "bool", title: "Resume currently playing music after notification", required: false, defaultValue: true
             input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
         }
-        section() {
+        section("Select Home Modes when you want to run this rule...") {
+            input "HomeMode", "mode", required: false, title: "Home Modes?", multiple: true
+        }
+            section() {
             label title: "Assign a name", required: false
-            mode title: "Set for specific mode(s)", required: false
         }
     }
 }
@@ -68,7 +70,6 @@ def updated() {
 def subscribe() {
     subscribe(app, appTouchHandler)
 	subscribe(contact, "contact.open", doorOpen)
-
 }
 
 def appTouchHandler(evt){
@@ -91,11 +92,12 @@ def appTouchHandler(evt){
 
 def doorOpen(evt)
 {
-	log.trace "doorOpen($evt.name: $evt.value)"
-	def delay = (openThreshold != null && openThreshold != "") ? openThreshold * 60 : 300
-	runIn(delay, doorOpenTooLong)
+    def curMode = location.mode
+    if (HomeMode?.find{it == curMode}) {
+        def delay = (openThreshold != null && openThreshold != "") ? openThreshold * 60 : 300
+        runIn(delay, doorOpenTooLong)
+    }
 }
-
 
 def doorOpenTooLong() {
 	def contactState = contact.currentState("contact")
