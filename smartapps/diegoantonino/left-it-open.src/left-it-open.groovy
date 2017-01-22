@@ -163,10 +163,10 @@ def doorOpenTooLong() {
 
 void sendMessage()
 {
-	def minutes = (openThreshold != null && openThreshold != "") ? openThreshold : 5
-	def message = "${contact.displayName} has been left open for ${minutes} minutes."
-
     loadText()
+
+    log.debug "StateSoundUri = ${state.sound.uri}"
+    log.debug "StateSound = ${state.sound}"
 
     if (song) {
         sonos.playSoundAndTrack(state.sound.uri, state.sound.duration, state.selectedSong, volume)
@@ -186,9 +186,10 @@ void sendMessage()
 private loadText(){
 
     def minutes = (openThreshold != null && openThreshold != "") ? openThreshold : 5
-    def message = "${contact.displayName} has been left open for ${minutes} minutes."
+    def msg = "${contact.displayName} has been left open for ${minutes} minutes."
 
-    state.sound = textToSpeech(message, true)
-    log.info message
+    log.debug "msg = ${msg}"
+    state.sound = textToSpeech(msg)
+
 
 }
