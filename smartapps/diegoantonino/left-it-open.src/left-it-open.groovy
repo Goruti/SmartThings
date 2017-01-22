@@ -151,7 +151,7 @@ def doorOpenTooLong() {
 		def threshold = ((openThreshold != null && openThreshold != "") ? openThreshold * 60000 : 30000) - 1000
 		if (elapsed >= threshold) {
 			log.debug "Contact has stayed open long enough since last check ($elapsed ms):  calling sendMessage()"
-			sendMessage()
+            sendMessage()
             runIn(freq, doorOpenTooLong, [overwrite: false])
 		} else {
 			log.debug "Contact has not stayed open long enough since last check ($elapsed ms):  doing nothing"
@@ -164,9 +164,6 @@ def doorOpenTooLong() {
 void sendMessage()
 {
     loadText()
-
-    log.debug "StateSoundUri = ${state.sound.uri}"
-    log.debug "StateSound = ${state.sound}"
 
     if (song) {
         sonos.playSoundAndTrack(state.sound.uri, state.sound.duration, state.selectedSong, volume)
@@ -189,7 +186,7 @@ private loadText(){
     def msg = "${contact.displayName} has been left open for ${minutes} minutes."
 
     log.debug "msg = ${msg}"
-    state.sound = textToSpeech(msg)
-
+    state.sound = textToSpeech(msg) //This generate the mp3 on \
+    // StateSound = [uri:https://s3.amazonaws.com/smartapp-media/tts/0e5d6b9432d2dff1717dd1c2b6faf059f99edbad.mp3, duration:3]
 
 }
