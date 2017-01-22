@@ -16,10 +16,10 @@
  *  Date: 2013-05-09
  */
 definition(
-    name: "Left It Open",
+    name: "Left It Open and notify on SONOS",
     namespace: "DiegoAntonino",
     author: "SmartThings",
-    description: "Notifies you when you have left a door or window open longer that a specified amount of time.",
+    description: "Notifies on SONOS you when you have left a door or window open longer that a specified amount of time.",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/ModeMagic/bon-voyage.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/ModeMagic/bon-voyage%402x.png"
