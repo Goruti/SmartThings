@@ -37,6 +37,14 @@ preferences {
     section {
         input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: true
     }
+    section{
+        input "song","enum",title:"Play this track", required:true, multiple: false, options: songOptions()
+    }
+    section("More options", hideable: true, hidden: true) {
+        input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
+        input "frequency", "decimal", title: "Minimum time between actions (defaults to every event)", description: "Minutes", required: false
+
+    }
     section ("Change home to this mode"){
     	input "ModeToSet", "mode", title: "select a mode"
     }
@@ -109,4 +117,26 @@ def setHomeStatus(currentMode,ModeToBeSet) {
             log.warn "Tried to change to undefined mode $ModeToBeSet"
         }
     }
+}
+
+private songOptions() {
+
+    // Make sure current selection is in the set
+
+    def options = new LinkedHashSet()
+    if (state.selectedSong?.station) {
+        options << state.selectedSong.station
+    }
+    else if (state.selectedSong?.description) {
+        // TODO - Remove eventually? 'description' for backward compatibility
+        options << state.selectedSong.description
+    }
+
+    // Query for recent tracks
+    def states = sonos.statesSince("trackData", new Date(0), [max:30])
+    def dataMaps = states.collect{it.jsonValue}
+    options.addAll(dataMaps.collect{it.station})
+
+    log.trace "${options.size()} songs in list"
+    options.take(20) as List
 }
