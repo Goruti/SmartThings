@@ -31,7 +31,7 @@ preferences {
 	section("Turn On switch..."){
 		input "switch1", "capability.switch", multiple: true
 	}
-	section {
+	section() {
 		input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: false
 	}
 	section("More options", hideable: true, hidden: true) {
