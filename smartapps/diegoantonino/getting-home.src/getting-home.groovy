@@ -31,12 +31,12 @@ preferences {
 	section("Turn On switch..."){
 		input "switch1", "capability.switch", multiple: true
 	}
-	section() {
-		input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: false
+	section("Sonos Speakers") {
+		input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: true
 	}
-	section("More options", hideable: true, hidden: true) {
+	section("More options") {
 		input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
-		input "song","enum",title:"Play this track", required: false, multiple: false, options: songOptions()
+		input "song","enum",title:"Play this track", required:true, multiple: false, options: songOptions()
 	}
     section("Turn On TV..."){
 		input "tv", "capability.tv", multiple: true
@@ -55,24 +55,15 @@ preferences {
 
 def installed()
 {
-    log.debug "Installed with settings: ${settings}"
-    subscribeToEvents()
+	subscribe(presence1, "presence", presenceHandler)
 }
 
 def updated()
 {
-    log.debug "Updated with settings: ${settings}"
 	unsubscribe()
-    subscribeToEvents()
+	subscribe(presence1, "presence", presenceHandler)
 }
 
-def subscribeToEvents() {
-    subscribe(presence1, "presence", presenceHandler)
-
-    if (song) {
-        saveSelectedSong()
-    }
-}
 def presenceHandler(evt) {
 	def now = new Date()
 	def sunTime = getSunriseAndSunset(sunsetOffset: "-00:30")
