@@ -96,7 +96,7 @@ def doorOpen(evt)
     log.trace "curMode: $curMode"
 
     if (HomeMode != '' || HomeMode == null || HomeMode?.find{it == curMode}) {
-        log.trace "eventHandler($evt?.name: $evt?.value)"
+        log.trace "eventHandler($evt.name: $evt.value)"
         def delay = (openThreshold != null && openThreshold != "") ? openThreshold * 60 : 300
         runIn(delay, doorOpenTooLong)
     }
