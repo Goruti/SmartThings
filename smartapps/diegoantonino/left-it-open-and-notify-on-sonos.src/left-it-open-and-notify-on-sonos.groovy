@@ -92,9 +92,11 @@ def appTouchHandler(evt){
 
 def doorOpen(evt)
 {
-    def curMode = location.mode    
+    def curMode = location.mode
+    log.trace "curMode: $curMode"
+
     if (HomeMode != '' || HomeMode == null || HomeMode?.find{it == curMode}) {
-    	log.debug "curMode: $curMode"
+        log.trace "eventHandler($evt?.name: $evt?.value)"
         def delay = (openThreshold != null && openThreshold != "") ? openThreshold * 60 : 300
         runIn(delay, doorOpenTooLong)
     }
