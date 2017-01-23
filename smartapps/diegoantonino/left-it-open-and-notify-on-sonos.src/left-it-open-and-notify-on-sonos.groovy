@@ -139,8 +139,6 @@ void sendMessage(elapsed)
 }
 
 private loadText(elapsed){
-	log.debug "elapsed = ${elapsed}"
-
     def minutes = Math.round(elapsed / 60000)
     def msg = "${contact.displayName} has been left open for ${minutes} minutes."
 
