@@ -31,6 +31,13 @@ preferences {
 	section("Turn On switch..."){
 		input "switch1", "capability.switch", multiple: true
 	}
+	section {
+		input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: false
+	}
+	section("More options", hideable: true, hidden: true) {
+		input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
+		input "song","enum",title:"Play this track", required: false, multiple: false, options: songOptions()
+	}
     section("Turn On TV..."){
 		input "tv", "capability.tv", multiple: true
 	}
@@ -48,15 +55,24 @@ preferences {
 
 def installed()
 {
-	subscribe(presence1, "presence", presenceHandler)
+    log.debug "Installed with settings: ${settings}"
+    subscribeToEvents()
 }
 
 def updated()
 {
+    log.debug "Updated with settings: ${settings}"
 	unsubscribe()
-	subscribe(presence1, "presence", presenceHandler)
+    subscribeToEvents()
 }
 
+def subscribeToEvents() {
+    subscribe(presence1, "presence", presenceHandler)
+
+    if (song) {
+        saveSelectedSong()
+    }
+}
 def presenceHandler(evt) {
 	def now = new Date()
 	def sunTime = getSunriseAndSunset(sunsetOffset: "-00:30")
@@ -98,5 +114,52 @@ def setHomeStatus(currentMode,ModeToBeSet) {
         else {
             log.warn "Tried to change to undefined mode $ModeToBeSet"
         }
+    }
+}
+
+private songOptions() {
+
+    // Make sure current selection is in the set
+
+    def options = new LinkedHashSet()
+    if (state.selectedSong?.station) {
+        options << state.selectedSong.station
+    }
+    else if (state.selectedSong?.description) {
+        // TODO - Remove eventually? 'description' for backward compatibility
+        options << state.selectedSong.description
+    }
+
+    // Query for recent tracks
+    def states = sonos.statesSince("trackData", new Date(0), [max:30])
+    def dataMaps = states.collect{it.jsonValue}
+    options.addAll(dataMaps.collect{it.station})
+
+    log.trace "${options.size()} songs in list"
+    options.take(20) as List
+}
+
+private saveSelectedSong() {
+    try {
+        def thisSong = song
+        log.info "Looking for $thisSong"
+        def songs = sonos.statesSince("trackData", new Date(0), [max:30]).collect{it.jsonValue}
+        log.info "Searching ${songs.size()} records"
+
+        def data = songs.find {s -> s.station == thisSong}
+        log.info "Found ${data?.station}"
+        if (data) {
+            state.selectedSong = data
+            log.debug "Selected song = $state.selectedSong"
+        }
+        else if (song == state.selectedSong?.station) {
+            log.debug "Selected existing entry '$song', which is no longer in the last 20 list"
+        }
+        else {
+            log.warn "Selected song '$song' not found"
+        }
+    }
+    catch (Throwable t) {
+        log.error t
     }
 }
