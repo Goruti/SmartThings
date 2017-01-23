@@ -132,7 +132,7 @@ private songOptions() {
     }
 
     // Query for recent tracks
-    def states = sonos.statesSince("trackData", new Date(0), [max:30])
+    def states = sonos.statesSince("trackData", new Date() -5, [max:30])
     def dataMaps = states.collect{it.jsonValue}
     options.addAll(dataMaps.collect{it.station})
 
