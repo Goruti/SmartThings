@@ -37,13 +37,12 @@ preferences {
     section {
         input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: true
     }
-    section{
-        input "song","enum",title:"Play this track", required:true, multiple: false, options: songOptions()
-    }
+   // section{
+   //     input "song","enum",title:"Play this track", required:true, multiple: false, options: songOptions()
+   // }
     section("More options", hideable: true, hidden: true) {
         input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
         input "frequency", "decimal", title: "Minimum time between actions (defaults to every event)", description: "Minutes", required: false
-
     }
     section ("Change home to this mode"){
     	input "ModeToSet", "mode", title: "select a mode"
