@@ -102,7 +102,7 @@ def doorOpen(evt)
     }
 }
 
-def doorOpenTooLong(data) {
+def doorOpenTooLong() {
 	def contactState = contact.currentState("contact")
 
     def freq = (frequency != null && frequency != "") ? frequency * 60 : 300
@@ -112,7 +112,7 @@ def doorOpenTooLong(data) {
 		def threshold = ((openThreshold != null && openThreshold != "") ? openThreshold * 60000 : 30000) - 1000
 		if (elapsed >= threshold) {
 			log.debug "Contact has stayed open long enough since last check ($elapsed ms):  calling sendMessage()"
-            sendMessage()
+            sendMessage(elapsed)
             runIn(freq, doorOpenTooLong, [overwrite: false])
 		} else {
 			log.debug "Contact has not stayed open long enough since last check ($elapsed ms):  doing nothing"
@@ -122,9 +122,9 @@ def doorOpenTooLong(data) {
 	}
 }
 
-void sendMessage()
+void sendMessage(elapsed)
 {
-    loadText()
+    loadText(elapsed)
 
     if (resumePlaying){
         sonos.playTrackAndResume(state.sound.uri, state.sound.duration, volume)
@@ -138,9 +138,9 @@ void sendMessage()
 
 }
 
-private loadText(){
+private loadText(elapsed){
 
-    def minutes = ((now() - contactState.rawDateCreated.time) / 60000).round()
+    def minutes = (elapsed / 60000).round()
     def msg = "${contact.displayName} has been left open for ${minutes} minutes."
 
     log.debug "msg = ${msg}"
