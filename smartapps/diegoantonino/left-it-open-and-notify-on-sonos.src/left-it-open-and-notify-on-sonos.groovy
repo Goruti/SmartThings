@@ -102,7 +102,7 @@ def doorOpen(evt)
     }
 }
 
-def doorOpenTooLong() {
+def doorOpenTooLong(data) {
 	def contactState = contact.currentState("contact")
 
     def freq = (frequency != null && frequency != "") ? frequency * 60 : 300
@@ -112,7 +112,7 @@ def doorOpenTooLong() {
 		def threshold = ((openThreshold != null && openThreshold != "") ? openThreshold * 60000 : 30000) - 1000
 		if (elapsed >= threshold) {
 			log.debug "Contact has stayed open long enough since last check ($elapsed ms):  calling sendMessage()"
-            sendMessage()
+            sendMessage(data.t0)
             runIn(freq, doorOpenTooLong, [overwrite: false])
 		} else {
 			log.debug "Contact has not stayed open long enough since last check ($elapsed ms):  doing nothing"
@@ -140,7 +140,7 @@ void sendMessage()
 
 private loadText(){
 
-    def minutes = (openThreshold != null && openThreshold != "") ? openThreshold : 5
+    def minutes = ((now() - contactState.rawDateCreated.time) / 60000).round()
     def msg = "${contact.displayName} has been left open for ${minutes} minutes."
 
     log.debug "msg = ${msg}"
