@@ -112,7 +112,7 @@ def doorOpenTooLong(data) {
 		def threshold = ((openThreshold != null && openThreshold != "") ? openThreshold * 60000 : 30000) - 1000
 		if (elapsed >= threshold) {
 			log.debug "Contact has stayed open long enough since last check ($elapsed ms):  calling sendMessage()"
-            sendMessage(data.t0)
+            sendMessage()
             runIn(freq, doorOpenTooLong, [overwrite: false])
 		} else {
 			log.debug "Contact has not stayed open long enough since last check ($elapsed ms):  doing nothing"
