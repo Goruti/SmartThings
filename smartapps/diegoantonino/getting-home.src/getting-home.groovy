@@ -32,8 +32,11 @@ preferences {
 		input "switch1", "capability.switch", multiple: true
 	}
     section("Turn On TV..."){
-		input "tv", "capability.tv", multiple: true
+		input "tv", "capability.switch", multiple: true
 	}
+    section {
+        input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: true
+    }
     section ("Change home to this mode"){
     	input "ModeToSet", "mode", title: "select a mode"
     }
@@ -46,15 +49,22 @@ preferences {
     }
 }
 
-def installed()
-{
-	subscribe(presence1, "presence", presenceHandler)
+def installed() {
+    log.debug "Installed with settings: ${settings}"
+    subscribeToEvents()
 }
 
-def updated()
-{
+def updated() {
+    log.debug "Updated with settings: ${settings}"
 	unsubscribe()
-	subscribe(presence1, "presence", presenceHandler)
+    subscribeToEvents()
+}
+
+def subscribeToEvents(){
+    subscribe(presence1, "presence", presenceHandler)
+   // if (song) {
+   //     saveSelectedSong()
+   // }
 }
 
 def presenceHandler(evt) {
