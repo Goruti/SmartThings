@@ -53,15 +53,16 @@ def my_callback(pin):
 def notify_hub(sensor_name, sensor_status):
     alarm[sensor_name] = sensor_status
   #  print datetime.datetime.now(), json.dumps({sensor_name: sensor_status})
-    resend = send_event(json.dumps({
-        'sensor_name': sensor_name,
-        'sensor_status': sensor_status}))
+  #  resend = send_event(json.dumps({
+  #      'sensor_name': sensor_name,
+  #      'sensor_status': sensor_status}))
 
     i = 0
-    while resend and i < 5:
+    send_flag = True
+    while send_flag and i < 5:
         i += 1
-        print "{} re-send".format(i)
-        resend = send_event(json.dumps({
+        print "{} send".format(i)
+        send_flag = send_event(json.dumps({
             'sensor_name': sensor_name,
             'sensor_status': sensor_status}))
 
