@@ -66,7 +66,7 @@ def notify_hub(sensor_name, sensor_status):
 def send_event(event):
     i = 0
     send_flag = True
-    print "event: ", event
+    #print "event: ", event
     
     while send_flag and i < 5:
         send_flag = send_evt(event)
