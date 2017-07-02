@@ -23,6 +23,11 @@ def main():
     for pin in channels:
         alarm.update({channel_def.get(pin): status_names[GPIO.input(pin)]})
     print "Initial State: {}".format(alarm)
+    
+    for key, value in alarm:
+        send_event(json.dumps({
+            'sensor_name': key,
+            'sensor_status': value}))
 
     try:
         while True:
@@ -57,17 +62,23 @@ def notify_hub(sensor_name, sensor_status):
   #      'sensor_name': sensor_name,
   #      'sensor_status': sensor_status}))
 
-    i = 0
-    send_flag = True
-    while send_flag and i < 5:
-        i += 1
-        print "{} send".format(i)
-        send_flag = send_event(json.dumps({
-            'sensor_name': sensor_name,
-            'sensor_status': sensor_status}))
-
+    send_event(json.dumps({
+        'sensor_name': sensor_name,
+        'sensor_status': sensor_status}))
 
 def send_event(event):
+    i = 0
+    send_flag = True
+    print "event: ", event
+    
+    while send_flag and i < 5:
+        send_flag = send_evt(event)
+        if send_flag:
+            i += 1
+            print "{} send".format(i)
+    
+            
+def send_evt(event):
     answer = False
     url = "http://192.168.2.80:39500"
     headers = {
@@ -82,7 +93,6 @@ def send_event(event):
         if r.status_code != 202:
             print "Post Error Code: {}, Post Error Message: {}".format(r.status_code, r.text)
             answer = True
-
     return answer
 
 
