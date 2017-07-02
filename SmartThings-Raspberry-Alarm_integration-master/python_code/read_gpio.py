@@ -6,8 +6,10 @@ import time
 
 def main():
     GPIO.setmode(GPIO.BCM)
-    channels = [12, 16, 20, 21]  # pins 32, 36, 38, 40
-    channel_names = ['zone01', 'zone02', 'zone03', 'zone04']
+    #channels = [12, 16, 20, 21]  # pins 32, 36, 38, 40
+    #channel_names = ['zone01', 'zone02', 'zone03', 'zone04']
+    channels = [12, 16, 21]  # pins 32, 36, 40
+    channel_names = ['zone01', 'zone02', 'zone04']
 
     global channel_def
     channel_def = dict(zip(channels, channel_names))
@@ -77,7 +79,7 @@ def send_event(event):
             
 def send_evt(event):
     error_status = False
-    url = "http://192.168.2.80:39500"
+    url = "http://192.168.1.252:39500"
     headers = {
         'content-type': "application/json",
     }
