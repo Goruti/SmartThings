@@ -24,7 +24,7 @@ def main():
         alarm.update({channel_def.get(pin): status_names[GPIO.input(pin)]})
     print "Initial State: {}".format(alarm)
     
-    for key, value in alarm:
+    for key, value in alarm.iteritems():
         send_event(json.dumps({
             'sensor_name': key,
             'sensor_status': value}))
@@ -57,11 +57,6 @@ def my_callback(pin):
 
 def notify_hub(sensor_name, sensor_status):
     alarm[sensor_name] = sensor_status
-  #  print datetime.datetime.now(), json.dumps({sensor_name: sensor_status})
-  #  resend = send_event(json.dumps({
-  #      'sensor_name': sensor_name,
-  #      'sensor_status': sensor_status}))
-
     send_event(json.dumps({
         'sensor_name': sensor_name,
         'sensor_status': sensor_status}))
