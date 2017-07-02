@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import requests
 import datetime
 import json
+import time
 
 def main():
     GPIO.setmode(GPIO.BCM)
@@ -28,6 +29,7 @@ def main():
         send_event(json.dumps({
             'sensor_name': key,
             'sensor_status': value}))
+        time.sleep(1)
 
     try:
         while True:
@@ -74,7 +76,7 @@ def send_event(event):
     
             
 def send_evt(event):
-    answer = False
+    error_status = False
     url = "http://192.168.2.80:39500"
     headers = {
         'content-type': "application/json",
@@ -83,12 +85,12 @@ def send_evt(event):
         r = requests.post(url, data=event, headers=headers)
     except requests.exceptions.RequestException as e:
         print e
-        answer = True
+        error_status = True
     else:
         if r.status_code != 202:
             print "Post Error Code: {}, Post Error Message: {}".format(r.status_code, r.text)
-            answer = True
-    return answer
+            error_status = True
+    return error_status
 
 
 if __name__ == "__main__":
