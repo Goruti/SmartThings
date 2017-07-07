@@ -109,7 +109,7 @@ def tv_on_off():
 @app.route("/homesweethome/api/v1.0/tv/status/<tv_ip>", methods=['GET'])
 @auth.login_required
 def get_status(tv_ip):
-    response = os.system("ping -W 0.1 -w 3 -c 3 " + tv_ip + "> /dev/null 2>&1")
+    response = os.system("{} {} {}".format("ping -W 1 -w 3 -c 3 -q", tv_ip, "> /dev/null 2>&1"))
     if response == 0:
         answer = json.dumps({'status': 'on'})
     else:
@@ -117,7 +117,7 @@ def get_status(tv_ip):
     print answer
     return answer, 200, {'Content-type': 'application/json'}
 
-def select_tv_input(tv_ip):                
+def select_tv_input(tv_ip):
     time.sleep(30)
     err_code, message = lg_API.ControlAction(tv_ip, "27")
     time.sleep(1)

@@ -1,3 +1,3 @@
 .idea
 *.pyc
-python_code/conf.py
+/python_code/conf.py
