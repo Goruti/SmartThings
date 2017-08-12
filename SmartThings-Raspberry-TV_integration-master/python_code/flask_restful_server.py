@@ -36,7 +36,7 @@ def tv_on_off():
                 if tv_ip:
                     body, code, content_type = get_status(tv_ip)
                     if json.loads(body)['status'] == "off":
-                        code = subprocess.call('/bin/echo "on 0" | /usr/osmc/bin/cec-client -d 1 -s', shell=True)
+                        code = subprocess.call('/bin/echo "on 0" | /usr/bin/cec-client -d 1 -s', shell=True)
                         if not code: #code = 0 --> Command was executed OK
                             #select_tv_input(tv_ip)
                             err_code = 200
