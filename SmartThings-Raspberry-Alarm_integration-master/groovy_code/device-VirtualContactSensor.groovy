@@ -1,0 +1,1 @@
+../../devicetypes/diegoantonino/virtual-contact-sensor.src/virtual-contact-sensor.groovy
