@@ -7,4 +7,5 @@ You need:
   - Raspberry-pi
   - SmartThings Hub
   - Compatible Smarthing devices (in my case, presence sensor)
-  - Instal libcec (https://github.com/DiegoAntonino/libcec/blob/master/docs/README.raspberrypi.md)
+  - Verify you have installed libcec in your Raspberry-pi (usually /usr/bin/cec-client)
+  - you can find the deviceHandler in https://github.com/DiegoAntonino/SmartThings/tree/master/devicetypes/diegoantonino/flask-raspberry.src
