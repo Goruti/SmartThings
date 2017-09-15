@@ -1,5 +1,6 @@
-import cec
+# DEPRECATED. CURRENTLY THIS FILE IS NOT USED!!!!
 
+import cec
 
 def send_data(data):
     rsp = False
