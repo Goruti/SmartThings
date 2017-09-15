@@ -25,35 +25,50 @@ definition(
 
 
 preferences {
-	section("When Someone arrive..."){
-		input "presence1", "capability.presenceSensor", title: "Who?", multiple: true
+	page(name: "mainPage", title: "Play a message on your Speaker when something happens", install: true, uninstall: true)
+	page(name: "chooseTrack", title: "Select a song or station")
+}
+
+
+def mainPage() {
+	dynamicPage(name: "mainPage") {
+        section("When Someone arrive..."){
+            input "presence1", "capability.presenceSensor", title: "Who?", multiple: true
+        }
+        section("Turn On switch..."){
+            input "switch1", "capability.switch", multiple: true
+        }
+        section("Turn On TV..."){
+            input "tv", "capability.switch", multiple: true
+        }
+        section {
+            input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: true
+        }
+        section("More options", hideable: true, hidden: true) {
+            href "chooseTrack", title: "Or play this music or radio station", description: song ? state.selectedSong?.station : "Tap to set", state: song ? "complete" : "incomplete"
+            input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
+            input "frequency", "decimal", title: "Minimum time between actions (defaults to every event)", description: "Minutes", required: false
+        }
+        section ("Change home to this mode"){
+            input "ModeToSet", "mode", title: "select a mode"
+        }
+        section("Dimmer to make bright when Mode is Night") {
+            input "dimmerNight", "capability.switchLevel", title: "Which dimmer?", required: false
+            input "brightness", "number", title: "Light Level", required: false
+        }
+        section("Selects Night Modes...") {
+            input "NightMode", "mode", required: false, title: "Night Mode?", multiple: true
+        }
+        
+        }
+}
+
+def chooseTrack() {
+	dynamicPage(name: "chooseTrack") {
+		section{
+			input "song","enum",title:"Play this track", required:true, multiple: false, options: songOptions()
+		}
 	}
-	section("Turn On switch..."){
-		input "switch1", "capability.switch", multiple: true
-	}
-    section("Turn On TV..."){
-		input "tv", "capability.switch", multiple: true
-	}
-    section {
-        input "sonos", "capability.musicPlayer", title: "On this Speaker player", required: true
-    }
-    section{
-        input "song","enum",title:"Play this track", required:true, multiple: false, options: songOptions()
-    }
-    section("More options", hideable: true, hidden: true) {
-        input "volume", "number", title: "Temporarily change volume", description: "0-100%", required: false
-        input "frequency", "decimal", title: "Minimum time between actions (defaults to every event)", description: "Minutes", required: false
-    }
-    section ("Change home to this mode"){
-    	input "ModeToSet", "mode", title: "select a mode"
-    }
-    section("Dimmer to make bright when Mode is Night") {
-        input "dimmerNight", "capability.switchLevel", title: "Which dimmer?", required: false
-        input "brightness", "number", title: "Light Level", required: false
-	}
-    section("Selects Night Modes...") {
-        input "NightMode", "mode", required: false, title: "Night Mode?", multiple: true
-    }
 }
 
 def installed() {
@@ -69,9 +84,9 @@ def updated() {
 
 def subscribeToEvents(){
     subscribe(presence1, "presence", presenceHandler)
-   // if (song) {
-   //     saveSelectedSong()
-   // }
+    if (song) {
+        saveSelectedSong()
+    }
 }
 
 def presenceHandler(evt) {
@@ -138,4 +153,29 @@ private songOptions() {
 
     log.trace "${options.size()} songs in list"
     options.take(20) as List
+}
+
+private saveSelectedSong() {
+	try {
+		def thisSong = song
+		log.info "Looking for $thisSong"
+		def songs = sonos.statesSince("trackData", new Date(0), [max:30]).collect{it.jsonValue}
+		log.info "Searching ${songs.size()} records"
+
+		def data = songs.find {s -> s.station == thisSong}
+		log.info "Found ${data?.station}"
+		if (data) {
+			state.selectedSong = data
+			log.debug "Selected song = $state.selectedSong"
+		}
+		else if (song == state.selectedSong?.station) {
+			log.debug "Selected existing entry '$song', which is no longer in the last 20 list"
+		}
+		else {
+			log.warn "Selected song '$song' not found"
+		}
+	}
+	catch (Throwable t) {
+		log.error t
+	}
 }

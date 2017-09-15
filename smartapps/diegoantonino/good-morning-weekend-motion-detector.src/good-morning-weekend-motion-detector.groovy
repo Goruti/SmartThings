@@ -32,7 +32,7 @@ preferences {
         input "ActiveMinutes", "number", required: true, title: "Minutes?"
     }
     section("Turn On switch..."){
-		input "switch1", "capability.switch", multiple: true
+		input "switch1", "capability.switch", required: false, multiple: true
 	}
     section ("Change home to this mode"){
     	input "ModeToSet", "mode", title: "select a mode"
