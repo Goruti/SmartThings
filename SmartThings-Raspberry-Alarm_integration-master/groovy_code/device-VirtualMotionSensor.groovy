@@ -1,1 +1,0 @@
-devicetypes/diegoantonino/virtual-motion-sensor.src/virtual-motion-sensor.groovy
