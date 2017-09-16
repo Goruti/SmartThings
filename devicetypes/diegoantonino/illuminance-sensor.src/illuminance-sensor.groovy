@@ -60,7 +60,8 @@ metadata {
         }
 
         main("PycomInfo")
-        details "PyComInfo"
+        details (["PyComInfo",
+        "lux", "ir_light", "total_light", "visible_light"])
     }
 }
 
