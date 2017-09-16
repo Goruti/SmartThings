@@ -26,7 +26,6 @@ preferences {
 
 metadata {
   definition (name: "Flask - Raspberry", namespace: "diegoantonino", author: "Diego Antonino") {
-		//capability "tv"
         capability "Switch"
         capability "Refresh"
         
@@ -236,7 +235,7 @@ def refresh(){
 
   	def hubAction = new physicalgraph.device.HubAction(
         method: "GET",
-        path: "/homesweethome/api/v1.0/tv/status/${tv_ip}",
+        path: "/homesweethome/api/v1.0/decive/status/${tv_ip}",
         headers: headers,
       )
       

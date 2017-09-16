@@ -106,16 +106,22 @@ def tv_on_off():
     return err_msj, err_code, {'Content-type': 'application/json'}
 
 
-@app.route("/homesweethome/api/v1.0/tv/status/<tv_ip>", methods=['GET'])
+@app.route("/homesweethome/api/v1.0/device/status/<device_ip>", methods=['GET'])
 @auth.login_required
-def get_status(tv_ip):
-    response = os.system("{} {} {}".format("ping -W 1 -w 3 -c 3 -q", tv_ip, "> /dev/null 2>&1"))
+def get_status(device_ip):
+    response = os.system("{} {} {}".format("ping -W 1 -w 3 -c 3 -q", device_ip, "> /dev/null 2>&1"))
     if response == 0:
-        answer = json.dumps({'status': 'on'})
+        answer = json.dumps({
+            'device': device_ip,
+            'status': 'on'
+        })
     else:
-        answer = json.dumps({'status': 'off'})
-    print answer
+        answer = json.dumps({
+            'device': device_ip,
+            'status': 'off'
+        })
     return answer, 200, {'Content-type': 'application/json'}
+
 
 def select_tv_input(tv_ip):
     time.sleep(30)
