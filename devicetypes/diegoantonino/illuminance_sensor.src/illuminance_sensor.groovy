@@ -59,6 +59,7 @@ metadata {
             state "visible_light", label:'${currentValue}'
         }
 
+        main("PycomInfo")
         details "PyComInfo"
     }
 }

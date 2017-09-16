@@ -235,7 +235,7 @@ def refresh(){
 
   	def hubAction = new physicalgraph.device.HubAction(
         method: "GET",
-        path: "/homesweethome/api/v1.0/decive/status/${tv_ip}",
+        path: "/homesweethome/api/v1.0/device/status/${tv_ip}",
         headers: headers,
       )
       
