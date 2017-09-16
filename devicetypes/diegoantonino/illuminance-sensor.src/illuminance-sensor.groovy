@@ -15,12 +15,12 @@
  */
 
 preferences {
-    input("pycom_mac", "string", title:"PyCom MAC Address", description: "B827EBF9EA6B", defaultValue: "B827EBF9EA6B" , required: true, displayDuringSetup: true)
-    input("pycom_ip", "string", title:"PyCom IP Address", description: "192.168.2.71", defaultValue: "192.168.2.71", required: true, displayDuringSetup: true)
-    input("raspberry_ip", "string", title:"Raspberry IP Address", description: "192.168.2.69", defaultValue: "192.168.2.69" ,required: true, displayDuringSetup: true)
-    input("raspberry_port", "string", title:"Raspberry Port", description: "5000", defaultValue: "5000" , required: true, displayDuringSetup: true)
-    input("username", "string", title:"Username", description: "pi", defaultValue: "pi" , required: true, displayDuringSetup: true)
-    input("password", "password", title:"Password", description: "raspberry", defaultValue: "raspberry" , required: true, displayDuringSetup: true)
+    input("pycom_mac", "string", title:"PyCom MAC Address", required: true, displayDuringSetup: true)
+    input("pycom_ip", "string", title:"PyCom IP Address", required: false, displayDuringSetup: true)
+    input("raspberry_ip", "string", title:"Raspberry IP Address", required: false, displayDuringSetup: true)
+    input("raspberry_port", "string", title:"Raspberry Port", required: false, displayDuringSetup: true)
+    input("username", "string", title:"Username", required: false, displayDuringSetup: true)
+    input("password", "password", title:"Password", required: false, displayDuringSetup: true)
 }
 
 metadata {
