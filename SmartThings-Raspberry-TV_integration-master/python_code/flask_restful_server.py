@@ -30,7 +30,6 @@ def tv_on_off():
     if request.headers['Content-Type'] == 'application/json':
         command = request.json.get('command')
         if command:
-
             if command == "on":
                 tv_ip = request.json.get('tv_ip')
                 if tv_ip:
