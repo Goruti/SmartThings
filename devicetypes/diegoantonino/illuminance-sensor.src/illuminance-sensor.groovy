@@ -42,11 +42,11 @@ metadata {
     }
 
     tiles(scale: 2) {
-        standardTile("pycom_status", "device.pycom_status", width: 6, height: 4) {
+        standardTile("PyComInfo", "device.PyComInfo", width: 6, height: 4) {
             state "online", label:'${name}', action:"refresh", backgroundColor: "#79b821", icon: "st.Electronics.electronics1"
             state "offline", label:'${name}', action:"refresh",  backgroundColor: "#79b821", icon: "st.Electronics.electronics1"
         }
-        valueTile("lux", "device.lux", decoration: "flat", width: 2, height: 2) {
+        valueTile("lux", "device.lux", decoration: "flat", width: 6, height: 2) {
             state "lux", label:'${currentValue} Lux'
         }
         valueTile("ir_light", "device.ir_light", decoration: "flat", width: 2, height: 2) {
@@ -59,8 +59,8 @@ metadata {
             state "visible_light", label:'${currentValue}'
         }
 
-        main("pycom_status")
-        details (["pycom_status",
+        main("PycomInfo")
+        details (["PyComInfo",
         "lux", "ir_light", "total_light", "visible_light"])
     }
 }
