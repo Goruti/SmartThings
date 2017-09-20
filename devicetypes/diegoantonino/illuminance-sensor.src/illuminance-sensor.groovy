@@ -13,78 +13,73 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
-
+ 
 preferences {
-    input("pycom_mac", "string", title: "PyCom-mac", required: true, displayDuringSetup: true)
-    input("pycom_ip", "string", title: "PyCom-ip", required: false, displayDuringSetup: true)
-    input("raspberry_ip", "string", title: "Raspberry-ip", required: false, displayDuringSetup: true)
-    input("raspberry_port", "string", title: "Raspberry-port", required: false, displayDuringSetup: true)
-    input("username", "string", title: "Username", required: false, displayDuringSetup: true)
-    input("password", "password", title: "Password", required: false, displayDuringSetup: true)
+		input("pycom_mac", "string", title:"PyCom MAC", required: true, displayDuringSetup: true)
+		input("pycom_ip", "string", title: "PyCom IP", required: false, displayDuringSetup: true)
+		input("raspberry_ip", "string", title: "Raspberry-ip", required: false, displayDuringSetup: true)
+		input("raspberry_port", "string", title: "Raspberry-port", required: false, displayDuringSetup: true)
+		input("username", "string", title: "Username", required: false, displayDuringSetup: true)
+		input("password", "password", title: "Password", required: false, displayDuringSetup: true)
 }
 
 metadata {
-    definition (name: "Illuminance Sensor", namespace: "DiegoAntonino", author: "Diego Antonino") {
-        capability "illuminanceMeasurement"
-        capability "Refresh"
+  definition (name: "Illuminance Sensor", namespace: "DiegoAntonino", author: "Diego Antonino") {
+    capability "illuminanceMeasurement"
+    
+	attribute "PyComInfo", "enum", ["online", "offline"]
+	attribute "lux", "number"
+	attribute "ir_light", "number"
+	attribute "total_light", "number"
+	attribute "visible_light", "number"
+  }
 
-        command "refresh"
+  simulator {
+    // TODO: define status and reply messages here
+  }
 
-        attribute "PyComInfo", "enum", ["online", "offline"]
-        attribute "lux", "number"
-        attribute "ir_light", "number"
-        attribute "total_light", "number"
-        attribute "visible_light", "number"
-    }
+  tiles(scale: 2) {
+	standardTile("status", "device.status", decoration: "flat", width: 6, height: 2) {
+		state  "online", label:'${name}', action:"refresh", icon: "st.illuminance.illuminance.bright", backgroundColor: "#44b621"
+		state  "offline", label:'${name}', action:"refresh", icon: "st.illuminance.illuminance.bright", backgroundColor: "#bc2323"
+	}
+	valueTile("lux", "device.lux", decoration: "flat", width: 6, height: 2) {
+		state  "value", label:'${currentValue} lux'
+	}
+    valueTile("total_light", "device.total_light", decoration: "flat", width: 2, height: 2) {
+		state "value", label:'${currentValue} \nTotal'
+	}
+    valueTile("visible_light", "device.visible_light", decoration: "flat", width: 2, height: 2) {
+		state "value", label:'${currentValue} \nVisible'
+	}
+    valueTile("ir_light", "device.ir_light", decoration: "flat", width: 2, height: 2) {
+		state "value", label:'${currentValue} \nIR', color: "#44b621"
+	}
 
-    simulator {
-        // TODO: define status and reply messages here
-    }
-
-    tiles(scale: 2) {
-        standardTile("PyComInfo", "device.PyComInfo", width: 6, height: 2) {
-            state "online", label:'${name}', action:"refresh", backgroundColor: "#44b621", icon: "st.Electronics.electronics1"
-            state "offline", label:'${name}', action:"refresh",  backgroundColor: "#bc2323", icon: "st.Electronics.electronics1"
-        }
-        valueTile("lux", "device.lux", decoration: "flat", width: 6, height: 1) {
-            state "lux", label:'${currentValue} Lux'
-        }
-        valueTile("ir_light", "device.ir_light", decoration: "flat", width: 2, height: 1) {
-            state "ir_light", label:'${currentValue}\nIR'
-        }
-        valueTile("total_light", "device.total_light", decoration: "flat", width: 2, height: 1) {
-            state "total_light", label:'${currentValue}\nTotal'
-        }
-        valueTile("visible_light", "device.visible_light", decoration: "flat", width: 2, height: 1) {
-            state "visible_light", label:'${currentValue}\nVisible'
-        }
-
-        main("PycomInfo")
-        details(["PyComInfo",
-        "lux", 
-        "ir_light", "total_light", "visible_light"])
-    }
+      main('status')
+      details(["status", "lux", "total_light", "visible_light", "ir_light"])
+  }
 }
 
 def installed() {
-    updateSettings()
+	updateSettings()
 }
 
 def updated() {
-    updateSettings()
+	updateSettings()
 }
 // ------------------------------------------------------------------
 def updateSettings(){
     setDeviceNetworkId(pycom_mac)
-    //runEvery5Minutes(refresh())
+    sendEvent(name: "PyComInfo", value: "online")
 }
 
-def parse(String description) {
+def parse(String description){
     def msg = parseLanMessage(description)
     def body = msg.json
-
-    log.debug body
-
+    
+    //log.debug "body", body
+    
     if (body) {
         sendEvent(name: "lux", value: "${body.lux}")
         sendEvent(name: "ir_light", value: "${body.ir_light}")
@@ -110,7 +105,6 @@ def refresh() {
         log.debug "Hit Exception ${e} on ${hubAction}"
     }
 }
-
 
 // ------------------------------------------------------------------
 // Helper methods
