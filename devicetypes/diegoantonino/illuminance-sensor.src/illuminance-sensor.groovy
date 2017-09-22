@@ -27,11 +27,8 @@ metadata {
   definition (name: "Illuminance Sensor", namespace: "DiegoAntonino", author: "Diego Antonino") {
     capability "illuminanceMeasurement"
     
-	attribute "PyComInfo", "enum", ["online", "offline"]
+	attribute "status", "enum", ["online", "offline"]
 	attribute "lux", "number"
-	attribute "ir_light", "number"
-	attribute "total_light", "number"
-	attribute "visible_light", "number"
   }
 
   simulator {
@@ -43,21 +40,12 @@ metadata {
 		state  "online", label:'${name}', action:"refresh", icon: "st.illuminance.illuminance.bright", backgroundColor: "#44b621"
 		state  "offline", label:'${name}', action:"refresh", icon: "st.illuminance.illuminance.bright", backgroundColor: "#bc2323"
 	}
-	valueTile("lux", "device.lux", decoration: "flat", width: 6, height: 2) {
+	valueTile("lux", "device.lux", decoration: "flat", width: 6, height: 1) {
 		state  "value", label:'${currentValue} lux'
-	}
-    valueTile("total_light", "device.total_light", decoration: "flat", width: 2, height: 2) {
-		state "value", label:'${currentValue} \nTotal'
-	}
-    valueTile("visible_light", "device.visible_light", decoration: "flat", width: 2, height: 2) {
-		state "value", label:'${currentValue} \nVisible'
-	}
-    valueTile("ir_light", "device.ir_light", decoration: "flat", width: 2, height: 2) {
-		state "value", label:'${currentValue} \nIR', color: "#44b621"
 	}
 
       main('status')
-      details(["status", "lux", "total_light", "visible_light", "ir_light"])
+      details(["status", "lux"])
   }
 }
 
@@ -71,7 +59,7 @@ def updated() {
 // ------------------------------------------------------------------
 def updateSettings(){
     setDeviceNetworkId(pycom_mac)
-    sendEvent(name: "PyComInfo", value: "online")
+    sendEvent(name: "status", value: "online")
 }
 
 def parse(String description){
@@ -82,9 +70,6 @@ def parse(String description){
     
     if (body) {
         sendEvent(name: "lux", value: "${body.lux}")
-        sendEvent(name: "ir_light", value: "${body.ir_light}")
-        sendEvent(name: "total_light", value: "${body.total_light}")
-        sendEvent(name: "visible_light", value: "${body.visible_light}")
     }
 }
 
