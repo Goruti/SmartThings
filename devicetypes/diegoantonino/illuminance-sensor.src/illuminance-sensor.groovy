@@ -26,9 +26,10 @@ preferences {
 metadata {
   definition (name: "Illuminance Sensor", namespace: "DiegoAntonino", author: "Diego Antonino") {
     capability "illuminanceMeasurement"
+    capability "Sensor"
     
 	attribute "status", "enum", ["online", "offline"]
-	attribute "lux", "number"
+	attribute "illuminance", "number"
   }
 
   simulator {
@@ -40,11 +41,11 @@ metadata {
 		state  "online", label:'${name}', action:"refresh", icon: "st.illuminance.illuminance.bright", backgroundColor: "#44b621"
 		state  "offline", label:'${name}', action:"refresh", icon: "st.illuminance.illuminance.bright", backgroundColor: "#bc2323"
 	}
-	valueTile("lux", "device.lux", decoration: "flat", width: 6, height: 1) {
+	valueTile("lux", "device.illuminance", decoration: "flat", width: 6, height: 1) {
 		state  "value", label:'${currentValue} lux'
 	}
 
-      main('status')
+      main('lux')
       details(["status", "lux"])
   }
 }
@@ -66,11 +67,16 @@ def parse(String description){
     def msg = parseLanMessage(description)
     def body = msg.json
     
-    //log.debug "body", body
+    //log.debug("body", "${body}")
     
     if (body) {
-        sendEvent(name: "lux", value: "${body.lux}")
+    	log.debug("${body.lux}")
+        return createEvent(name: "illuminance", value: "${body.lux}")
     }
+    else {
+    	log.debug "ERROR: ", msg
+    }
+    
 }
 
 def refresh() {
