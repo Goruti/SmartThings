@@ -66,11 +66,9 @@ def updateSettings(){
 def parse(String description){
     def msg = parseLanMessage(description)
     def body = msg.json
-    
-    //log.debug("body", "${body}")
-    
+        
     if (body) {
-    	log.debug("${body.lux}")
+    	//log.debug("${body.lux}")
         return createEvent(name: "illuminance", value: "${body.lux}")
     }
     else {
