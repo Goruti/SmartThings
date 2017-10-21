@@ -5,13 +5,13 @@ import os
 import check_presence_conf
 from datetime import datetime
 
-PHONES_STATUS = check_presence_conf
-
 
 def main():
+    PHONES_STATUS = check_presence_conf.PHONES
+
     try:
         while True:
-            for key, value in PHONES_STATUS.PHONES.iteritems():
+            for key, value in PHONES_STATUS.iteritems():
                 count = 0
                 status = get_status(value.get("ip"))
                 while status != value.get("status") and count < 5:
