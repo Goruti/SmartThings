@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 import requests
-import datetime
 import json
 import time
 

@@ -32,7 +32,10 @@ preferences {
         input "ActiveMinutes", "number", required: true, title: "Minutes?"
     }
     section("Turn On switch..."){
-		input "switch1", "capability.switch", required: false, multiple: true
+		input "switchOn", "capability.switch", required: false, multiple: true
+	}
+    section("Turn Off switch..."){
+		input "switchOff", "capability.switch", required: false, multiple: true
 	}
     section ("Change home to this mode"){
     	input "ModeToSet", "mode", title: "select a mode"
@@ -156,7 +159,8 @@ def checkMotion() {
             log.debug "Motion has stayed active long enough since last check ($elapsed ms)"
             sendLocationEvent(name: "alarmSystemStatus", value: "off") //  Set alarm status to "Disarm" state.
             setHomeStatus(curMode,ModeToSet) // Set Home to Home Mode
-            switch1?.on() //Turn Switch on
+            switchOn?.on() //Turn Switch on
+            switchOff?.off() //Turn Switch off
 
         } else {
             log.debug "Motion has not stayed active long enough since last check ($elapsed ms):  doing nothing"
