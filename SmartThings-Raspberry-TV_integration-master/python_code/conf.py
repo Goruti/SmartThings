@@ -1,2 +1,2 @@
 def UserPass():
-    return "<YOUR USERNAME>", "<YOUR PASSWORD>"
+    return "diego&carla", "b9MCU3sv"

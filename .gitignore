@@ -1,3 +1,4 @@
 *.iml
 /.idea/
 /SmartThings-Raspberry-Presence_integration-master/python_code/check_presence_conf.py.bkp
+*.pyc

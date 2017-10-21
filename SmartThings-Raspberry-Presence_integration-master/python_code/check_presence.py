@@ -2,8 +2,8 @@ import requests
 import json
 import time
 import os
-import check_presence_conf.py
-
+import check_presence_conf
+from datetime import datetime
 
 def main():
     try:
@@ -16,7 +16,7 @@ def main():
                     count += 1
 
                 if count == 5:
-                    print "{}: {}".format(key, status)
+                    print "{} - {}: {}".format(datetime.now(), key, status)
                     #notify_hub(key, status)
 
             time.sleep(5)
