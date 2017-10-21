@@ -8,22 +8,24 @@ from datetime import datetime
 
 def main():
     PHONES_STATUS = check_presence_conf.PHONES
+    NUMBER_OF_CHECK = 2
+    SLEEP_TIME = 5
 
     try:
         while True:
             for key, value in PHONES_STATUS.iteritems():
                 count = 0
                 status = get_status(value.get("ip"))
-                while status != value.get("status") and count < 5:
+                while status != value.get("status") and count < NUMBER_OF_CHECK:
                     status = get_status(value.get("ip"))
                     count += 1
 
-                if count == 5:
+                if count == NUMBER_OF_CHECK:
                     print "{} - {}: {}".format(datetime.now(), key, status)
                     PHONES_STATUS[key]["status"] = status
                     #notify_hub(key, status)
 
-            time.sleep(5)
+            time.sleep(SLEEP_TIME)
 
     except (KeyboardInterrupt, SystemExit):
         print "\nEnding Loop"
@@ -67,7 +69,7 @@ def send_evt(event):
 
 
 def get_status(device_ip):
-    return 'not present' if os.system("{} {} {}".format("ping -W 1 -w 3 -c 3 -q", device_ip, "> /dev/null 2>&1")) else 'present'
+    return 'not present' if os.system("{} {} {}".format("ping -W 1 -w 2 -c 2 -q", device_ip, "> /dev/null 2>&1")) else 'present'
 
 
 if __name__ == "__main__":
