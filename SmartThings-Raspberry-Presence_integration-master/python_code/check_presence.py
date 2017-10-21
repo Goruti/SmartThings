@@ -24,13 +24,7 @@ def main():
     except (KeyboardInterrupt, SystemExit):
         print "\nEnding Loop"
     except Exception as e:
-        raise e
-
-    finally:
-        print "Cleaning GPIO"
-
-
-
+        print e
 
 
 def notify_hub(name, status):
