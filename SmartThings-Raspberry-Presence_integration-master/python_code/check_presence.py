@@ -5,10 +5,13 @@ import os
 import check_presence_conf
 from datetime import datetime
 
+PHONES_STATUS = check_presence_conf
+
+
 def main():
     try:
         while True:
-            for key, value in check_presence_conf.PHONES.iteritems():
+            for key, value in PHONES_STATUS.PHONES.iteritems():
                 count = 0
                 status = get_status(value.get("ip"))
                 while status != value.get("status") and count < 5:
@@ -17,6 +20,7 @@ def main():
 
                 if count == 5:
                     print "{} - {}: {}".format(datetime.now(), key, status)
+                    PHONES_STATUS[key]["status"] = status
                     #notify_hub(key, status)
 
             time.sleep(5)
