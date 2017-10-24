@@ -15,7 +15,7 @@
  */
  
 preferences {
-        input("raspberry_mac", "string", title:"Raspberry MAC Address", description: "B827EBF9EA6B", defaultValue: "B827EBF9EA6B" , required: False, displayDuringSetup: true)
+        input("raspberry_mac", "string", title:"Raspberry MAC Address", description: "B827EBF9EA6B", defaultValue: "B827EBF9EA6B" , required: true, displayDuringSetup: true)
 }
 
 metadata {

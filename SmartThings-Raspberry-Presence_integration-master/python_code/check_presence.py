@@ -2,8 +2,12 @@ import requests
 import json
 import time
 import os
+import sys
+import blescan
+import bluetooth._bluetooth as bluez
 import check_presence_conf
 from datetime import datetime
+import threading
 
 
 def main():
@@ -11,26 +15,40 @@ def main():
     NUMBER_OF_CHECK = 2
     SLEEP_TIME = 5
 
+    dev_id = 0
     try:
-        while True:
-            for key, value in PHONES_STATUS.iteritems():
-                count = 0
-                status = get_status(value.get("ip"))
-                while status != value.get("status") and count < NUMBER_OF_CHECK:
-                    status = get_status(value.get("ip"))
-                    count += 1
+        sock = bluez.hci_open_dev(dev_id)
+        print "ble thread started"
+    except Exception as e:
+        print "error accessing bluetooth device. Error: {}".format(e)
+        sys.exit(1)
 
-                if count == NUMBER_OF_CHECK:
-                    print "{} - {}: {}".format(datetime.now(), key, status)
-                    PHONES_STATUS[key]["status"] = status
-                    #notify_hub(key, status)
+    blescan.hci_le_set_scan_parameters(sock)
+    blescan.hci_enable_le_scan(sock)
 
-            time.sleep(SLEEP_TIME)
-
-    except (KeyboardInterrupt, SystemExit):
-        print "\nEnding Loop"
+    threads = []
+    try:
+        for key, info in PHONES_STATUS:
+            t = threading.Thread(target=worker, args=(key, info, sock))
+            threads.append(t)
+            t.start()
     except Exception as e:
         print e
+
+
+def worker(key, info, sock):
+
+    while True:
+        returnedList = blescan.parse_events(sock, 10)
+
+
+
+
+
+        for beacon in returnedList:
+            if beacon.split(",")[1] in PHONES_STATUS.keys():
+                print PHONES_STATUS[beacon[1]].get("name")
+
 
 
 def notify_hub(name, status):
