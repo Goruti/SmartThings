@@ -128,7 +128,7 @@ def parse_events(sock, loop_count=100):
     flt = bluez.hci_filter_new()
     bluez.hci_filter_all_events(flt)
     bluez.hci_filter_set_ptype(flt, bluez.HCI_EVENT_PKT)
-    sock.setsockopt( bluez.SOL_HCI, bluez.HCI_FILTER, flt )
+    sock.setsockopt(bluez.SOL_HCI, bluez.HCI_FILTER, flt)
     done = False
     results = []
     myFullList = []
