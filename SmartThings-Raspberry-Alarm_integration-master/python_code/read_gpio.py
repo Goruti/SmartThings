@@ -64,6 +64,7 @@ def notify_hub(sensor_name, sensor_status):
         'sensor_name': sensor_name,
         'sensor_status': sensor_status}))
 
+
 def send_event(event):
     i = 0
     send_flag = True

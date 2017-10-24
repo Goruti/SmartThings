@@ -1,4 +1,5 @@
-from flask import Flask, request, json, jsonify
+from flask import Flask, request, json
+import requests
 from flask_httpauth import HTTPBasicAuth
 import json
 import os
@@ -18,6 +19,7 @@ def get_password(username):
     if username == username_password[0]:
         return username_password[1]
     return None
+
 
 @auth.error_handler
 def unauthorized():
@@ -108,18 +110,24 @@ def tv_on_off():
 @app.route("/homesweethome/api/v1.0/device/status/<device_ip>", methods=['GET'])
 @auth.login_required
 def get_status(device_ip):
-    response = os.system("{} {} {}".format("ping -W 1 -w 3 -c 3 -q", device_ip, "> /dev/null 2>&1"))
+    status = check_status(device_ip)
+    return status, 200, {'Content-type': 'application/json'}
+
+
+def check_status(ip):
+    response = os.system("{} {} {}".format("ping -W 1 -w 3 -c 3 -q", ip, "> /dev/null 2>&1"))
     if response == 0:
         answer = json.dumps({
-            'device': device_ip,
+            'device': ip,
             'status': 'on'
         })
     else:
         answer = json.dumps({
-            'device': device_ip,
+            'device': ip,
             'status': 'off'
         })
-    return answer, 200, {'Content-type': 'application/json'}
+
+    return answer
 
 
 def select_tv_input(tv_ip):
@@ -130,5 +138,49 @@ def select_tv_input(tv_ip):
     time.sleep(1)
     err_code, message = lg_API.ControlAction(tv_ip, "20")
 
+
+def send_event(event):
+    i = 0
+    send_flag = True
+    #print "event: ", event
+
+    while send_flag and i < 5:
+        send_flag = send_evt(event)
+        if send_flag:
+            i += 1
+            print "{} send".format(i)
+
+
+def send_evt(event):
+    error_status = False
+    url = "http://192.168.1.252:39500"
+    headers = {
+        'content-type': "application/json",
+    }
+    try:
+        r = requests.post(url, data=event, headers=headers)
+    except requests.exceptions.RequestException as e:
+        print e
+        error_status = True
+    else:
+        if r.status_code != 202:
+            print "Post Error Code: {}, Post Error Message: {}".format(r.status_code, r.text)
+            error_status = True
+    return error_status
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+    time.sleep(60)
+    TV_IP = "192.168.1.21"
+    TV_STATUS = ''
+
+    while True:
+        answer = check_status(TV_IP)
+        if TV_STATUS != answer.status:
+            TV_STATUS = answer.status
+            send_event(answer)
+        time.sleep(60)
+
+
+
