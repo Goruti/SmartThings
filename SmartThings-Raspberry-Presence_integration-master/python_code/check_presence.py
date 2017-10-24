@@ -7,13 +7,11 @@ import blescan
 import bluetooth._bluetooth as bluez
 import check_presence_conf
 from datetime import datetime
+import threading
 
 
 def main():
     PHONES_STATUS = check_presence_conf.PHONES
-    NUMBER_OF_CHECK = 12
-    SLEEP_TIME = 5
-    COUNT = 0
 
     dev_id = 0
     try:
@@ -26,19 +24,54 @@ def main():
     blescan.hci_le_set_scan_parameters(sock)
     blescan.hci_enable_le_scan(sock)
 
+    threads = []
+    try:
+        for key, value in PHONES_STATUS.iteritems():
+            t = threading.Thread(target=worker, args=(key, value, sock))
+            threads.append(t)
+            t.start()
+
+    except Exception as e:
+        print e
+
+
+def worker(key, value, sock):
+    print "Starting Thread {}".format(key)
+    NUMBER_OF_CHECK = 12
+    SLEEP_TIME = 5
+    COUNT = 0
+
     while True:
         returnedList = blescan.parse_events(sock, 10)
         uuids = [x.split(",")[1] for x in returnedList]
 
-        result = set(uuids) & set([x.get('uuid') for x in PHONES_STATUS.values()])
+        #result = set(uuids) & set([x.get('uuid') for x in PHONES_STATUS.values()])
 
-        for key, value in PHONES_STATUS.iteritems():
-            if value.get('uuid') in result:
-                status = "present"
+        if value.get('uuid') in uuids:
+            status = "present"
 
-                if status != value.get('status'):
-                    PHONES_STATUS[key]['status'] = status
-                    PHONES_STATUS[key]['count'] = 0
+            if status != value.get('status'):
+                value['status'] = status
+                COUNT = 0
+                print "{} - {} {}".format(datetime.now(), key, status)
+                send_event(json.dumps({
+                    "type": "presence",
+                    "body": {
+                        'person': key,
+                        'status': status
+                    }
+                }))
+
+            elif COUNT != 0:
+                COUNT = 0
+
+        else:
+            status = "not present"
+            if status != value.get('status'):
+
+                if COUNT >= NUMBER_OF_CHECK:
+                    value['status'] = status
+                    COUNT = 0
                     print "{} - {} {}".format(datetime.now(), key, status)
                     send_event(json.dumps({
                         "type": "presence",
@@ -47,29 +80,10 @@ def main():
                             'status': status
                         }
                     }))
+                else:
+                    COUNT += 1
 
-                elif PHONES_STATUS[key]['count'] != 0:
-                    PHONES_STATUS[key]['count'] = 0
-
-            else:
-                status = "not present"
-                if status != value.get('status'):
-
-                    if PHONES_STATUS[key]['count'] >= NUMBER_OF_CHECK:
-                        PHONES_STATUS[key]['status'] = status
-                        PHONES_STATUS[key]['count'] = 0
-                        print "{} - {} {}".format(datetime.now(), key, status)
-                        send_event(json.dumps({
-                            "type": "presence",
-                            "body": {
-                                'person': key,
-                                'status': status
-                            }
-                        }))
-                    else:
-                        PHONES_STATUS[key]['count'] += 1
-
-            time.sleep(SLEEP_TIME)
+        time.sleep(SLEEP_TIME)
 
 
 def send_event(event):
