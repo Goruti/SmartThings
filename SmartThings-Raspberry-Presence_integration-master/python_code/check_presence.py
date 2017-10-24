@@ -42,9 +42,6 @@ def worker(key, info, sock):
         returnedList = blescan.parse_events(sock, 10)
 
 
-
-
-
         for beacon in returnedList:
             if beacon.split(",")[1] in PHONES_STATUS.keys():
                 print PHONES_STATUS[beacon[1]].get("name")
