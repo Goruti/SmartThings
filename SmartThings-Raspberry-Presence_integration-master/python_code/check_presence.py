@@ -18,9 +18,9 @@ def main():
     dev_id = 0
     try:
         sock = bluez.hci_open_dev(dev_id)
-        print "ble thread started"
+        print "{} - ble thread started".format(datetime.now())
     except Exception as e:
-        print "error accessing bluetooth device. Error: {}".foramt(e)
+        print "{} - error accessing bluetooth device. Error: {}".foramt(datetime.now(), e)
         sys.exit(1)
 
     blescan.hci_le_set_scan_parameters(sock)
@@ -40,6 +40,14 @@ def main():
                     PHONES_STATUS[key]['status'] = status
                     PHONES_STATUS[key]['count'] = 0
                     print "{} - {} {}".format(datetime.now(), key, status)
+                    send_event(json.dumps({
+                        "type": "presence",
+                        "body": {
+                            'person': key,
+                            'status': status
+                        }
+                    }))
+
                 elif PHONES_STATUS[key]['count'] != 0:
                     PHONES_STATUS[key]['count'] = 0
 
@@ -51,16 +59,17 @@ def main():
                         PHONES_STATUS[key]['status'] = status
                         PHONES_STATUS[key]['count'] = 0
                         print "{} - {} {}".format(datetime.now(), key, status)
+                        send_event(json.dumps({
+                            "type": "presence",
+                            "body": {
+                                'person': key,
+                                'status': status
+                            }
+                        }))
                     else:
                         PHONES_STATUS[key]['count'] += 1
 
             time.sleep(SLEEP_TIME)
-
-
-def notify_hub(name, status):
-    send_event(json.dumps({
-        'person': name,
-        'status': status}))
 
 
 def send_event(event):
