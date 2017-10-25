@@ -53,8 +53,8 @@ metadata {
 
   tiles(scale: 2) {
   	  standardTile("tv_status", "device.switch", inactiveLabel: true,  width: 6, height: 4) {
-        state "off", label: '${name}', action:"on", icon: "st.Electronics.electronics18", backgroundColor: "#ff3f34", nextState:"turningOn"
-        state "on", label: '${name}', action:"off", icon: "st.Electronics.electronics18", backgroundColor: "#79b821", nextState:"turningOff"
+        state "off", label: '${name}', action: "on", icon: "st.Electronics.electronics18", backgroundColor: "#ff3f34", nextState:"turningOn"
+        state "on", label: '${name}', action:" off", icon: "st.Electronics.electronics18", backgroundColor: "#79b821", nextState:"turningOff"
         state "turningOn", label:'Turning on', icon:"st.Electronics.electronics18", backgroundColor:"#79b821", nextState: "on"
     	state "turningOff", label:'Turning off', icon:"st.Electronics.electronics18", backgroundColor:"#ff3f34", nextState: "off"
       }
@@ -209,6 +209,13 @@ def on(){
 def off(){
     def body =  [command: 'off', tv_ip: tv_ip]
     postAction(body)
+}
+
+def on_state(){
+    sendEvent(name: "switch", value: "on")
+}
+def off_state(){
+    sendEvent(name: "switch", value: "off")
 }
 
 def refresh(){

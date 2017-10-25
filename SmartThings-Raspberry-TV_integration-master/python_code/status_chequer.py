@@ -14,6 +14,7 @@ def main():
             answer = json.loads(flask_restful_server.check_status(TV_IP))
             if TV_STATUS != answer.get("status"):
                 TV_STATUS = answer.get("status")
+                answer["type"] = "switch_status"
                 flask_restful_server.send_event(json.dumps(answer))
             time.sleep(60)
     except Exception as e:

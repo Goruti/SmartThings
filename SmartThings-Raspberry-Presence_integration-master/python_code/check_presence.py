@@ -71,7 +71,7 @@ def worker(key, value, sock):
                     COUNT = 0
                     print "{} - {} {}".format(datetime.now(), key, status)
                     send_event(json.dumps({
-                        "type": "presence",
+                        "type": "presence_status",
                         "body": {
                             'person': key,
                             'status': status

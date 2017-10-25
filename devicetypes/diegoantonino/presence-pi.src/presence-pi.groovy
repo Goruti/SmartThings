@@ -62,9 +62,13 @@ def parse(String description){
     log.debug content
 
     switch (content.type) {
-        case "presence":
+        case "presence_status":
         	log.debug "trigger event"
             createEvent(name: "PresenceTrigger", value: "${content.body.person}.${content.body.status}")
+            break
+        case "switch_status":
+            log.debug "trigger event"
+            createEvent(name: "SwitchTrigger", value: "${content.body.ip}.${content.body.status}")
             break
         default:
             log.debug "event type '${content.type}' is not defined"
