@@ -39,6 +39,13 @@ preferences {
     }
 
     section("TV - Switch Setup") {
+        input("raspberry_ip", "string", title:"Rest Server IP Address", required: false)
+        input("raspberry_port", "string", title:"Rest Server Port", required: false)
+        input("username", "string", title:"Rest Server Username", required: false)
+        input("password", "password", title:"Rest Server Password", required: false)
+        input("tv_ip", "string", title:"Tv IP Address", required: false)
+        input("blu_ray_ip", "string", title:"Blu-Ray IP Address", required: false)
+
         input "TvSwitchIp1", "text", title: "TvSwitch 1 IP", required: false
         input "TvSwitchIp2", "text", title: "TvSwitch 2 IP", required: false
 
@@ -75,31 +82,27 @@ def initialize(){
 
     if (presenceName1) {
         log.debug "create a presenceSensor named $presenceName1"
-        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presencePi_" + presenceName1, theHub.id, [label: presenceName1, name: presenceName1])
+        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presencePi_" + presenceName1, theHub.id, [label: presenceName1, name: presenceName1])
     }
     if (presenceName2) {
         log.debug "create a presenceSensor named $presenceName2"
-        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presencePi_" + presenceName2, theHub.id, [label: presenceName2, name: presenceName2])
+        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presencePi_" + presenceName2, theHub.id, [label: presenceName2, name: presenceName2])
     }
     if (presenceName3) {
         log.debug "create a presenceSensor named $presenceName3"
-        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presencePi_" + presenceName3, theHub.id, [label: presenceName3, name: presenceName3])
+        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presencePi_" + presenceName3, theHub.id, [label: presenceName3, name: presenceName3])
     }
     if (presenceName4) {
         log.debug "create a presenceSensor named $presenceName4"
-        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presencePi_" + presenceName4, theHub.id, [label: presenceName4, name: presenceName4])
+        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presencePi_" + presenceName4, theHub.id, [label: presenceName4, name: presenceName4])
     }
     if (presenceName5) {
         log.debug "create a presenceSensor named $presenceName5"
-        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presencePi_" + presenceName5, theHub.id, [label: presenceName5, name: presenceName5])
+        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presencePi_" + presenceName5, theHub.id, [label: presenceName5, name: presenceName5])
     }
     if (TvSwitchIp1) {
         log.debug "create a TV - Switch  named $TvSwitchName1"
-        def d = addChildDevice("DiegoAntonino", "Flask - Raspberry", "switchPi_" + TvSwitchIp1, theHub.id, [label: "TV-Switch 1", name: "TV-Switch 1"])
-    }
-    if (TvSwitchIp2) {
-        log.debug "create a TV - Switch  named $TvSwitchName2"
-        def d = addChildDevice("DiegoAntonino", "Flask - Raspberry", "switchPi_" + TvSwitchIp2, theHub.id, [label: "TV-Switch 2", name: "TV-Switch 2"])
+        addChildDevice("DiegoAntonino", "Flask - Raspberry", "switchPi_" + TvSwitchIp1, theHub.id, [label: "TV-Switch 1", name: "TV-Switch 1"])
     }
 
 

@@ -23,6 +23,9 @@ metadata {
       capability "bridge"
 
       attribute "PresenceTrigger", "string"
+      attribute "SwitchTrigger", "string"
+
+
       attribute "hubInfo", "enum", ["online", "offline"]
   }
 
