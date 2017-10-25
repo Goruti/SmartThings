@@ -20,6 +20,7 @@ preferences {
 
 metadata {
   definition (name: "Presence PI", namespace: "DiegoAntonino", author: "Diego Antonino") {
+      capability "bridge"
 
       attribute "PresenceTrigger", "string"
       attribute "hubInfo", "enum", ["online", "offline"]
