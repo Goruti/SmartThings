@@ -44,8 +44,6 @@ def worker(key, value, sock):
         returnedList = blescan.parse_events(sock, 10)
         uuids = [x.split(",")[1] for x in returnedList]
 
-        #result = set(uuids) & set([x.get('uuid') for x in PHONES_STATUS.values()])
-
         if value.get('uuid') in uuids:
             status = "present"
 

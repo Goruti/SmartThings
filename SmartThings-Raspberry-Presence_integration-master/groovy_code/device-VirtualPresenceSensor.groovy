@@ -14,12 +14,16 @@
  *
  */
 metadata {
-  definition (name: "Virtual Contact Sensor", namespace: "DiegoAntonino", author: "Diego Antonino") {
-    capability "Contact Sensor"
-    capability "Sensor"
-    
-    command "open"
-    command "close"
+  definition (name: "Virtual Presence Sensor", namespace: "DiegoAntonino", author: "Diego Antonino") {
+      capability "presenceSensor"
+      capability "sensor"
+
+      command "present"
+      command "away"
+
+      attribute "presence", "enum", ["present", "not present"]
+
+
 
   }
 
@@ -28,28 +32,28 @@ metadata {
   }
 
   tiles {
-		standardTile("contact", "device.contact", width: 3, height: 2) {
-			state("closed", label:'${name}', icon:"st.contact.contact.closed", backgroundColor:"#00a0dc")
-			state("open", label:'${name}', icon:"st.contact.contact.open", backgroundColor:"#e86d13")
+		standardTile("presence", "device.presence", width: 3, height: 2) {
+			state("present", label:'${name}', icon:"st.contact.contact.closed", backgroundColor:"#00a0dc")
+			state("not present", label:'${name}', icon:"st.contact.contact.open", backgroundColor:"#e86d13")
 		}
-		main "contact"
-		details "contact"
+		main "presence"
+		details "presence"
 	}
 }
 
 // parse events into attributes
 def parse(String description) {
   log.debug "Virtual Contact Parsing '${description}'"
-    // initialize to closed state
+    // initialize to present state
     if (description == "updated") {
-      sendEvent(name: "contact", value: "closed")
+      sendEvent(name: "presence", value: "present")
     }
 }
 
-def open() {
-  sendEvent(name: "contact", value: "open")
+def present() {
+  sendEvent(name: "presence", value: "present")
 }
 
-def close() {
-  sendEvent(name: "contact", value: "closed")
+def away() {
+  sendEvent(name: "presence", value: "not present")
 }

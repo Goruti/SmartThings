@@ -15,14 +15,14 @@
  */
  
 preferences {
-        input("raspberry_mac", "string", title:"Raspberry MAC Address", description: "B827EBF9EA6B", defaultValue: "B827EBF9EA6B" , required: False, displayDuringSetup: true)
+        input("raspberry_mac", "string", title:"Raspberry MAC Address", required: False, displayDuringSetup: true)
 }
 
 metadata {
-  definition (name: "Alarm PI", namespace: "DiegoAntonino", author: "Diego Antonino") {
-    capability "alarm"
-    
-    attribute "AlarmTrigger", "string"
+  definition (name: "Presence PI", namespace: "DiegoAntonino", author: "Diego Antonino") {
+      capability "presenceDetector"
+
+    attribute "PresenceTrigger", "string"
     attribute "hubInfo", "enum", ["online", "offline"]
   }
 
@@ -51,18 +51,24 @@ def updated() {
 // ------------------------------------------------------------------
 def updateSettings(){
     setDeviceNetworkId(raspberry_mac)
-    //sendEvent(name: "hubInfo", value: "offline")
     sendEvent(name: "hubInfo", value: "online")
 }
 
 def parse(String description){
     def msg = parseLanMessage(description)
     def error_code = msg.status
-    def body = msg.json
-    
-    log.debug body    
-    //createEvent(name: body.sensor_name, value: body.sensor_status)
-    createEvent(name: "AlarmTrigger", value: "${body.sensor_name}.${body.sensor_status}")
+    def content = msg.json
+
+    log.debug content
+
+    switch (content.type) {
+        case "presence":
+            createEvent(name: "PresenceTrigger", value: "${content.body.person}.${content.body.status}")
+            break
+        default:
+            log.debug "event type '${content.type}' is not defined"
+    }
+
 }
 
 private setDeviceNetworkId(mac){
