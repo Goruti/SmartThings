@@ -1,1 +1,1 @@
-../../smartapps/diegoantonino/presence-pi.src/presece-pi.groovy
+../../smartapps/diegoantonino/presence-pi.src/presence-pi.groovy
