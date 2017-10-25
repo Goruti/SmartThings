@@ -162,7 +162,7 @@ def send_evt(event):
 
 
 if __name__ == '__main__':
-    os.system("python status_chequer.py /dev/null 2>&1 &")
+    os.system("python ~/git/SmartThings/SmartThings-Raspberry-TV_integration-master/python_code/status_chequer.py /dev/null 2>&1 &")
     app.run(host='0.0.0.0', port=5000, debug=True)
 
 
