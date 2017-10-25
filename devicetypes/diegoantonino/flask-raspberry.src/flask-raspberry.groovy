@@ -15,12 +15,13 @@
  */
  
 preferences {
-        input("raspberry_ip", "string", title:"Raspberry IP Address", description: "192.168.2.69", defaultValue: "192.168.2.69" ,required: true, displayDuringSetup: true)
-        input("raspberry_port", "string", title:"Raspberry Port", description: "5000", defaultValue: "5000" , required: true, displayDuringSetup: true)
-        input("username", "string", title:"Username", description: "pi", defaultValue: "pi" , required: true, displayDuringSetup: true)
-        input("password", "password", title:"Password", description: "raspberry", defaultValue: "raspberry" , required: true, displayDuringSetup: true)
-        input("tv_ip", "string", title:"Tv IP Address", description: "192.168.2.71", defaultValue: "192.168.2.71", required: true, displayDuringSetup: true)
-        input("blu_ray_ip", "string", title:"Blu-Ray IP Address", description: "192.168.2.81", defaultValue: "192.168.2.81", required: true, displayDuringSetup: true)
+        input("raspberry_ip", "string", title:"Rest Server IP Address", required: true, displayDuringSetup: true)
+        input("raspberry_port", "string", title:"Rest Server Port", required: true, displayDuringSetup: true)
+        input("raspberry_mac", "string", title:"Rest Server MAC Address",  required: true, displayDuringSetup: true)
+        input("username", "string", title:"Rest Server Username", required: true, displayDuringSetup: true)
+        input("password", "password", title:"Rest Server Password", required: true, displayDuringSetup: true)
+        input("tv_ip", "string", title:"Tv IP Address", required: true, displayDuringSetup: true)
+        input("blu_ray_ip", "string", title:"Blu-Ray IP Address", required: true, displayDuringSetup: true)
         
 }
 
@@ -128,8 +129,7 @@ def updated() {
 }
 // ------------------------------------------------------------------
 def updateSettings(){
-	setDeviceNetworkId(raspberry_ip,raspberry_port)
-    runEvery5Minutes(refresh)
+	setDeviceNetworkId(raspberry_mac)
 }
 
 def parse(String description){
@@ -137,93 +137,78 @@ def parse(String description){
     //log.debug  "msg: ${msg}"
     def error_code = msg.status
     def body = msg.json
-
+    
+    //log.debug  "body: ${body}"
+    
     if (body) {
-    	if (error_code == 200) {
-        	log.debug  "Action has been executed"
-            if (body.status && body.status != device.currentValue("switch")) {
-                sendEvent(name: "switch", value: body.status)
-                log.debug  "<Device Handler> tv_status: ${device.currentValue("switch")}"
-            }
-                           
-		} else { log.debug "<Device Handler> ErrorCode: ${error_code}, ErrorMessage: ${body.error}" }
-     
-    } else { log.debug "<Device Handler> msg: ${msg}" }
+        if (body.status && body.status != device.currentValue("switch")) {
+            sendEvent(name: "switch", value: body.status)
+            log.debug  "<Device Handler> tv_status: ${device.currentValue("switch")}"
+        } else {
+        	log.debug "<Device Handler> wrong Body. msg: ${msg}, error_code: ${msg.status}"
+        }
+        
+    } else { log.debug "<Device Handler> Empty Body. msg: ${msg}, error_code: ${msg.status}"}
 }
 
 def arrow_up(){
-  //log.debug "<Device Handler> arrow_up"
     def body =  [command: 'control', action: "12", tv_ip: tv_ip]
 	postAction(body)
 }
 def arrow_down(){
-  //log.debug "<Device Handler> arrow_down"
     def body =  [command: 'control', action: "13", tv_ip: tv_ip]
 	postAction(body)
 }
 def arrow_left(){
-  //log.debug "<Device Handler> arrow_letf"
     def body =  [command: 'control', action: "14", tv_ip: tv_ip]
 	postAction(body)
 }
 def arrow_right(){
-  //log.debug "<Device Handler> arrow_right"
     def body =  [command: 'control', action: "15", tv_ip: tv_ip]
 	postAction(body)
 }
 def ok_button(){
-  //log.debug "<Device Handler> ok_button"
     def body =  [command: 'control', action: "20", tv_ip: tv_ip]
 	postAction(body)
 }
 def back(){
-  //log.debug "<Device Handler> back"
     def body =  [command: 'control', action: "23", tv_ip: tv_ip]
 	postAction(body)
 }
 def channel_up(){
-  //log.debug "<Device Handler> channel_up"
     def body =  [command: 'control', action: "27", tv_ip: tv_ip]
 	postAction(body)
 }
 def channel_down(){
-  //log.debug "<Device Handler> channel_down"
     def body =  [command: 'control', action: "28", tv_ip: tv_ip]
 	postAction(body)
 }
 def tv_input(){
-  //log.debug "<Device Handler> tv_input"
     def body =  [command: 'control', action: "47", tv_ip: tv_ip]
 	postAction(body)
 }
 def tv_exit(){
-  //log.debug "<Device Handler> tv_exit"
     def body =  [command: 'control', action: "412", tv_ip: tv_ip]
 	postAction(body)
 }
 def vol_up(){
-  //log.debug "<Device Handler> vol_up"
     def body =  [command: 'control', action: "vol_up", tv_ip: tv_ip, blu_ray_ip: blu_ray_ip]
 	postAction(body)
 }
 def vol_down(){
-  //log.debug "<Device Handler> vol_down"
     def body =  [command: 'control', action: "vol_down", tv_ip: tv_ip, blu_ray_ip: blu_ray_ip]
 	postAction(body)
 }
 def vol_mute(){
-  //log.debug "<Device Handler> vol_mute"
     def body =  [command: 'control', action: "vol_mute", tv_ip: tv_ip, blu_ray_ip: blu_ray_ip]
 	postAction(body)
 }
 
 def on(){
-//    sendEvent(name: "tv_status", value: "On")
     def body =  [command: 'on', tv_ip: tv_ip]
     postAction(body)
  }
 def off(){
-//    sendEvent(name: "tv_status", value: "Off")
     def body =  [command: 'off', tv_ip: tv_ip]
     postAction(body)
 }
@@ -287,19 +272,7 @@ private getHeader(userpass){
     return headers
 }
 
-private setDeviceNetworkId(ip,port){
-    def iphex = convertIPtoHex(ip)
-    def porthex = convertPortToHex(port)
-    device.deviceNetworkId = "${iphex}:${porthex}"
-    log.debug "<Device Handler> Device Network Id set to ${iphex}:${porthex}"
-}
-
-private String convertIPtoHex(ipAddress) { 
-    String hex = ipAddress.tokenize( '.' ).collect {  String.format( '%02x', it.toInteger() ) }.join()
-    return hex
-}
-
-private String convertPortToHex(port) {
-  String hexport = port.toString().format( '%04x', port.toInteger() )
-    return hexport
+private setDeviceNetworkId(mac){
+    device.deviceNetworkId = mac
+    log.debug "<Device Handler> Device Network Id set to ${mac}"
 }
