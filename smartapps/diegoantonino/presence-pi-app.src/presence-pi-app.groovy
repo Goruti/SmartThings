@@ -17,7 +17,7 @@ definition(
     name: "Presence Pi APP",
     namespace: "DiegoAntonino",
     author: "Diego Antonino",
-    description: "Trigger Presence that has been detected by Raspberry-PI on Smartthings",
+    description: "Trigger Presence/Away that has been detected by Raspberry-PI on Smartthings",
     category: "Convenience",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/SafetyAndSecurity/App-MindYourHome.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/SafetyAndSecurity/App-MindYourHome@2x.png",
@@ -26,16 +26,16 @@ definition(
 
 preferences {
 	section("Connect to the Pi..."){
-		input "thePi", "capability.bridge", title: "Which?", multiple: false, required: true
+		input "thePi", "capability.presenceDetector", title: "Which?", multiple: false, required: true
         input "theHub", "hub", title: "On which hub?", multiple: false, required: true
 	}
 
     section("Presence Setup") {
-    input "presenceName1", "text", title: "Presence 1 Name", required:false
-    input "presenceName2", "text", title: "Presence 2 Name", required:false
-    input "presenceName3", "text", title: "Presence 3 Name", required:false
-    input "presenceName4", "text", title: "Presence 4 Name", required:false
-    input "presenceName5", "text", title: "Presence 4 Name", required:false
+    input "presenceName1", "text", title: "Presence 1 Name", required: false
+    input "presenceName2", "text", title: "Presence 2 Name", required: false
+    input "presenceName3", "text", title: "Presence 3 Name", required: false
+    input "presenceName4", "text", title: "Presence 4 Name", required: false
+    input "presenceName5", "text", title: "Presence 4 Name", required: false
 
     }
 }
@@ -64,45 +64,48 @@ def uninstalled() {
 
 def initialize(){
     subscribe(thePi, "PresenceTrigger", presenceTrigger)
+
     if (presenceName1) {
         log.debug "create a presenceSensor named $presenceName1"
-        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presence01", theHub.id, [label:presenceName1, name:"presenceSensor"])
+        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presence01", theHub.id, [label: presenceName1, name: "presenceSensor"])
     }
     if (presenceName2) {
         log.debug "create a presenceSensor named $presenceName2"
-        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presence02", theHub.id, [label:presenceName2, name:"presenceSensor"])
+        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presence02", theHub.id, [label: presenceName2, name: "presenceSensor"])
     }
     if (presenceName3) {
         log.debug "create a presenceSensor named $presenceName3"
-        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presence03", theHub.id, [label:presenceName3, name:"presenceSensor"])
+        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presence03", theHub.id, [label: presenceName3, name: "presenceSensor"])
     }
     if (presenceName4) {
         log.debug "create a presenceSensor named $presenceName4"
-        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presence04", theHub.id, [label:presenceName4, name:"presenceSensor"])
+        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presence04", theHub.id, [label: presenceName4, name: "presenceSensor"])
     }
     if (presenceName5) {
         log.debug "create a presenceSensor named $presenceName5"
-        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presence05", theHub.id, [label:presenceName5, name:"presenceSensor"])
+        def d = addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "presence05", theHub.id, [label :presenceName5, name: "presenceSensor"])
     }
 }
 
 
 def presenceTrigger(evt){
-      log.debug "got evt.value: ${evt.value}"
-      def parts = evt.value.tokenize('.')
-      def presence = parts[0]
+    log.debug "got evt.value: ${evt.value}"
+    def parts = evt.value.tokenize('.')
+    def dev_presence = parts[0]
       
-      def children = getChildDevices()
-      def sensor = children.find{ d -> d.deviceNetworkId == "$presence" }
-        log.debug "got sensor $sensor"
-        if (sensor) {
-              switch(parts[1]) {
-                    case "present":
-                        sensor.present()
-                        break
-                    case "not present":
-                        sensor.away()
-                        break
-            }
-       }
+    def children = getChildDevices()
+    log.debug "got children $children"
+
+    def sensor = children.find{ d -> d.deviceNetworkId == "$dev_presence" }
+    log.debug "got sensor $sensor"
+    if (sensor) {
+        switch(parts[1]) {
+            case "present":
+                sensor.present()
+                break
+            case "not present":
+                sensor.away()
+                break
+        }
+    }
 }
