@@ -20,7 +20,7 @@ preferences {
 
 metadata {
   definition (name: "Presence PI", namespace: "DiegoAntonino", author: "Diego Antonino") {
-      capability "presenceDetector"
+      capability "presenceSensor"
 
     attribute "PresenceTrigger", "string"
     attribute "hubInfo", "enum", ["online", "offline"]
