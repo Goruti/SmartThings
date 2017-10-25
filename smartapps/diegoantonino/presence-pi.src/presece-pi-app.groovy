@@ -89,21 +89,23 @@ def initialize(){
 
 
 def presenceTrigger(evt){
-      log.debug "got evt.value: ${evt.value}"
-      def parts = evt.value.tokenize('.')
-      def dev_presence = parts[0]
+    log.debug "got evt.value: ${evt.value}"
+    def parts = evt.value.tokenize('.')
+    def dev_presence = parts[0]
       
-      def children = getChildDevices()
-      def sensor = children.find{ d -> d.deviceNetworkId == "$dev_presence" }
-        log.debug "got sensor $sensor"
-        if (sensor) {
-              switch(parts[1]) {
-                    case "present":
-                        sensor.present()
-                        break
-                    case "not present":
-                        sensor.away()
-                        break
-            }
-       }
+    def children = getChildDevices()
+    log.debug "got children $children"
+
+    def sensor = children.find{ d -> d.deviceNetworkId == "$dev_presence" }
+    log.debug "got sensor $sensor"
+    if (sensor) {
+        switch(parts[1]) {
+            case "present":
+                sensor.present()
+                break
+            case "not present":
+                sensor.away()
+                break
+        }
+    }
 }
