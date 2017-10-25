@@ -14,7 +14,7 @@
  *
  */
 definition(
-    name: "Alarm Pi APP",
+    name: "Alarm Pi",
     namespace: "DiegoAntonino",
     author: "Diego Antonino",
     description: "Trigger alarms that has been detected by Raspberry-PI on Smartthings",
