@@ -33,8 +33,8 @@ metadata {
 
   tiles {
 		standardTile("presence", "device.presence", width: 3, height: 2) {
-			state("present", label:'${name}', icon:"st.contact.contact.closed", backgroundColor:"#00a0dc")
-			state("not present", label:'${name}', icon:"st.contact.contact.open", backgroundColor:"#e86d13")
+			state("present", label:'${name}', canChangeIcon: true)
+			state("not present", label:'${name}', canChangeIcon: true)
 		}
 		main "presence"
 		details "presence"

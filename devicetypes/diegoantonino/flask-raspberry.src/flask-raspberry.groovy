@@ -129,7 +129,7 @@ def updated() {
 }
 // ------------------------------------------------------------------
 def updateSettings(){
-	setDeviceNetworkId(raspberry_mac)
+	setDeviceNetworkId(raspberry_ip, raspberry_port)
 }
 
 def parse(String description){
@@ -274,7 +274,21 @@ private getHeader(userpass){
     return headers
 }
 
-private setDeviceNetworkId(mac){
-    device.deviceNetworkId = mac
-    log.debug "<Device Handler> Device Network Id set to ${mac}"
+private setDeviceNetworkId(ip, port){
+  	def iphex = convertIPtoHex(ip)
+  	def porthex = convertPortToHex(port)
+    def dni = "${iphex}:${porthex}"
+  	device.deviceNetworkId = dni
+    log.debug "Device Network Id set to $dni"
+}
+
+private String convertIPtoHex(ipAddress) { 
+    String hex = ipAddress.tokenize( '.' ).collect {  String.format( '%02x', it.toInteger() ) }.join()
+    return hex
+
+}
+
+private String convertPortToHex(port) {
+	String hexport = port.toString().format( '%04x', port.toInteger() )
+    return hexport
 }
