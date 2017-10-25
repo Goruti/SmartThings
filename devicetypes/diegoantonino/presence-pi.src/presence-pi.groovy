@@ -63,6 +63,7 @@ def parse(String description){
 
     switch (content.type) {
         case "presence":
+        	log.debug "trigger event"
             createEvent(name: "PresenceTrigger", value: "${content.body.person}.${content.body.status}")
             break
         default:

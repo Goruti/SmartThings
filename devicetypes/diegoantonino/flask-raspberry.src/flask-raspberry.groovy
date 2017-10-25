@@ -17,7 +17,6 @@
 preferences {
         input("raspberry_ip", "string", title:"Rest Server IP Address", required: true, displayDuringSetup: true)
         input("raspberry_port", "string", title:"Rest Server Port", required: true, displayDuringSetup: true)
-        input("raspberry_mac", "string", title:"Rest Server MAC Address",  required: true, displayDuringSetup: true)
         input("username", "string", title:"Rest Server Username", required: true, displayDuringSetup: true)
         input("password", "password", title:"Rest Server Password", required: true, displayDuringSetup: true)
         input("tv_ip", "string", title:"Tv IP Address", required: true, displayDuringSetup: true)
@@ -134,12 +133,9 @@ def updateSettings(){
 
 def parse(String description){
     def msg = parseLanMessage(description)
-    //log.debug  "msg: ${msg}"
     def error_code = msg.status
     def body = msg.json
-    
-    //log.debug  "body: ${body}"
-    
+      
     if (body) {
     	if (body.status || body.result) {
             if (body.status && body.status != device.currentValue("switch")) {
