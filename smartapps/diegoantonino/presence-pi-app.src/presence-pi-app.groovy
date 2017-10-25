@@ -26,7 +26,7 @@ definition(
 
 preferences {
 	section("Connect to the Pi..."){
-		input "thePi", "capability.presenceDetector", title: "Which?", multiple: false, required: true
+		input "thePi", "capability.bridge", title: "Which?", multiple: false, required: true
         input "theHub", "hub", title: "On which hub?", multiple: false, required: true
 	}
 
