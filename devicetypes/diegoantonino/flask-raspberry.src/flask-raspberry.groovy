@@ -141,9 +141,11 @@ def parse(String description){
     //log.debug  "body: ${body}"
     
     if (body) {
-        if (body.status && body.status != device.currentValue("switch")) {
-            sendEvent(name: "switch", value: body.status)
-            log.debug  "<Device Handler> tv_status: ${device.currentValue("switch")}"
+    	if (body.status || body.result) {
+            if (body.status && body.status != device.currentValue("switch")) {
+                sendEvent(name: "switch", value: body.status)
+                log.debug  "<Device Handler> tv_status: ${device.currentValue("switch")}"
+            }
         } else {
         	log.debug "<Device Handler> wrong Body. msg: ${msg}, error_code: ${msg.status}"
         }
