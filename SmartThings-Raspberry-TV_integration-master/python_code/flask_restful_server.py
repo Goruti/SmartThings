@@ -8,6 +8,7 @@ import subprocess
 import lg_API
 import conf
 import time
+import status_chequer
 
 auth = HTTPBasicAuth()
 app = Flask(__name__)
@@ -115,19 +116,10 @@ def get_status(device_ip):
 
 
 def check_status(ip):
-    response = os.system("{} {} {}".format("ping -W 1 -w 3 -c 3 -q", ip, "> /dev/null 2>&1"))
-    if response == 0:
-        answer = json.dumps({
-            'device': ip,
-            'status': 'on'
-        })
-    else:
-        answer = json.dumps({
-            'device': ip,
-            'status': 'off'
-        })
+    return json.dumps({'device': ip, 'status': 'off'}) \
+        if os.system("{} {} {}".format("ping -W 1 -w 3 -c 3 -q", ip, "> /dev/null 2>&1")) \
+        else json.dumps({'device': ip, 'status': 'on'})
 
-    return answer
 
 
 def select_tv_input(tv_ip):
@@ -153,7 +145,7 @@ def send_event(event):
 
 def send_evt(event):
     error_status = False
-    url = "http://192.168.1.252:39500"
+    url = "http://{}:39500".format(conf.ST_IP)
     headers = {
         'content-type': "application/json",
     }
@@ -170,17 +162,9 @@ def send_evt(event):
 
 
 if __name__ == '__main__':
+    os.system("python status_chequer.py /dev/null 2>&1 &")
     app.run(host='0.0.0.0', port=5000, debug=True)
-    time.sleep(60)
-    TV_IP = "192.168.1.21"
-    TV_STATUS = ''
 
-    while True:
-        answer = check_status(TV_IP)
-        if TV_STATUS != answer.status:
-            TV_STATUS = answer.status
-            send_event(answer)
-        time.sleep(60)
 
 
 
