@@ -1,5 +1,5 @@
 /**
- *  Alarm PI
+ *  Presence PI
  *
  *  Copyright 2016 Diego Antonino
  *
@@ -20,10 +20,9 @@ preferences {
 
 metadata {
   definition (name: "Presence PI", namespace: "DiegoAntonino", author: "Diego Antonino") {
-      capability "presenceSensor"
 
-    attribute "PresenceTrigger", "string"
-    attribute "hubInfo", "enum", ["online", "offline"]
+      attribute "PresenceTrigger", "string"
+      attribute "hubInfo", "enum", ["online", "offline"]
   }
 
   simulator {
