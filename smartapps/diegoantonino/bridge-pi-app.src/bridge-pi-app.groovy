@@ -99,9 +99,9 @@ def initialize(){
     }
 
     if (tv_ip && blu_ray_ip && flask_ip && flask_port) {
-        log.debug "create a TV2"
+        log.debug "create a TV-Device"
         def dni = convertIPtoHex(tv_ip)
-        addChildDevice("DiegoAntonino", "Virtual TV Device", dni, theHub.id, [label: "TV2", name: "TV2", preferences: [tv_ip: tv_ip, blu_ray_ip: blu_ray_ip, flask_ip: flask_ip, flask_port: flask_port, username: username, password: password]])
+        addChildDevice("DiegoAntonino", "Virtual TV Device", dni, theHub.id, [label: "TV", name: "TV", preferences: [tv_ip: tv_ip, blu_ray_ip: blu_ray_ip, flask_ip: flask_ip, flask_port: flask_port, username: username, password: password]])
     }
 
 }
