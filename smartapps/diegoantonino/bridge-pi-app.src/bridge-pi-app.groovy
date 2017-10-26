@@ -79,23 +79,23 @@ def initialize(){
 
     if (presenceName1) {
         log.debug "create a presenceSensor named $presenceName1"
-        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName1, theHub.id, [label: presenceName1, name: presenceName1])
+        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName1.toLowerCase(), theHub.id, [label: presenceName1, name: presenceName1])
     }
     if (presenceName2) {
         log.debug "create a presenceSensor named $presenceName2"
-        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName2, theHub.id, [label: presenceName2, name: presenceName2])
+        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName2.toLowerCase(), theHub.id, [label: presenceName2, name: presenceName2])
     }
     if (presenceName3) {
         log.debug "create a presenceSensor named $presenceName3"
-        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName3, theHub.id, [label: presenceName3, name: presenceName3])
+        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName3.toLowerCase(), theHub.id, [label: presenceName3, name: presenceName3])
     }
     if (presenceName4) {
         log.debug "create a presenceSensor named $presenceName4"
-        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName4, theHub.id, [label: presenceName4, name: presenceName4])
+        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName4.toLowerCase(), theHub.id, [label: presenceName4, name: presenceName4])
     }
     if (presenceName5) {
         log.debug "create a presenceSensor named $presenceName5"
-        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName5, theHub.id, [label: presenceName5, name: presenceName5])
+        addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName5.toLowerCase(), theHub.id, [label: presenceName5, name: presenceName5])
     }
 
     if (tv_ip && blu_ray_ip && flask_ip && flask_port) {
@@ -110,7 +110,7 @@ def initialize(){
 def presenceTrigger(evt){
     log.debug "got evt.value: ${evt.value}"
     def parts = evt.value.tokenize('.')
-    def dev_presence = parts[0]
+    String dev_presence = "virtual_beacon_" + parts[0].toLowerCase()
       
     def children = getChildDevices()
     log.debug "got children ${children}"
