@@ -148,10 +148,10 @@ void VirtualTvResponseHandler(hubResponse) {
                log.debug  "<Device Handler> tv_status: ${device.currentValue("switch")}"
            }
        } else {
-       	log.debug "<Device Handler> wrong Body. msg: ${msg}, error_code: ${msg.status}"
+       	log.debug "<Device Handler> wrong Body. msg: ${body}, error_code: ${hubResponse.status}"
        }
        
-   } else { log.debug "<Device Handler> Empty Body. msg: ${msg}, error_code: ${msg.status}"}
+   } else { log.debug "<Device Handler> Empty Body. msg: ${body}, error_code: ${hubResponse.status}"}
 }
 
 def arrow_up(){
