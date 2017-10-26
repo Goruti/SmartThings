@@ -1,4 +1,4 @@
-ls -lr/**
+/**
  * Bridge PI APP
  *
  *  Copyright 2016 Diego
@@ -39,14 +39,14 @@ preferences {
     }
 
     section("TV & Blu-ray Setup", hideable: true, hidden: true) {
-        input("tv_ip", "string", title:"TV IP Address", required: false)
-        input("blu_ray_ip", "string", title:"Rest Server Ip", required: false)
+        input("tv_ip", "string", title:"TV IP", required: false)
+        input("blu_ray_ip", "string", title:"Blu-ray IP", required: false)
     }
     section("Flask Server Setup", hideable: true, hidden: true) {
         input("flask_ip", "string", title:"Rest Server Ip", required: false)
         input("flask_port", "string", title:"Rest Server Port", required: false)
-        input("username", "string", title:"Rest Server Username", required: true)
-		input("password", "password", title:"Rest Server Password", required: true)
+        input("username", "string", title:"Rest Server Username", required: false)
+		input("password", "password", title:"Rest Server Password", required: false)
     }
 }
 
