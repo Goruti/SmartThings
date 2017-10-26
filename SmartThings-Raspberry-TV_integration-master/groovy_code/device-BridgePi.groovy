@@ -1,0 +1,1 @@
+../../devicetypes/diegoantonino/bridge-pi-device.src/bridge-pi-device.groovy
