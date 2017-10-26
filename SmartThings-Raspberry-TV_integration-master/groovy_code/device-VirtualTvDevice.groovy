@@ -1,0 +1,1 @@
+../../devicetypes/diegoantonino/virtual-tv-device.src/virtual-tv-device.groovy

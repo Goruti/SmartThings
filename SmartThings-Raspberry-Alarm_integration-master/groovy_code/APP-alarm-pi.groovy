@@ -1,1 +1,1 @@
-../../smartapps/diegoantonino/alarm-pi.src/alarm-pi.groovy
+../../smartapps/diegoantonino/alarm-pi-app.src/alarm-pi-app.groovy

@@ -1,4 +1,4 @@
-/**
+ls -lr/**
  * Bridge PI APP
  *
  *  Copyright 2016 Diego

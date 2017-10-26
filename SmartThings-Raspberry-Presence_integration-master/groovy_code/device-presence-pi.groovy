@@ -1,1 +1,0 @@
-../../devicetypes/diegoantonino/presence-pi.src/presence-pi.groovy

@@ -1,1 +1,1 @@
-../../devicetypes/diegoantonino/alarm-pi.src/alarm-pi.groovy
+../../devicetypes/diegoantonino/alarm-pi-device.src/alarm-pi-device.groovy

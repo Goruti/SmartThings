@@ -13,7 +13,7 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
- 
+
 preferences {
 	//TV and BluRay Configuration
 	input("tv_ip", "string", title:"Tv IP Address", required: true)
