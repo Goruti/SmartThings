@@ -12,7 +12,7 @@ def main():
     try:
         while True:
             get_send_rpi_stats()
-            time.sleep(60)
+            time.sleep(conf.SLEEP_TIME)
 
     except Exception as e:
         print "Error in Status Chequer. Error:".format(e)

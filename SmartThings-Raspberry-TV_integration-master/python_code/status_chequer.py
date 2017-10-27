@@ -16,7 +16,7 @@ def main():
             #check TV status
             TV_STATUS = check_tv_status(TV_STATUS)
             RPI_STATUS = get_send_rpi_stats(RPI_STATUS)
-            time.sleep(60)
+            time.sleep(conf.SLEEP_TIME)
 
     except Exception as e:
         print "Error in Status Chequer. Error:".format(e)
