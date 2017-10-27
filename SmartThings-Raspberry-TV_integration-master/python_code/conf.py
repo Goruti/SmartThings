@@ -1,7 +1,7 @@
 def UserPass():
-    return "diego&carla", "b9MCU3sv"
+    return "{USERNAME}", "{PASSWORD}"
 
 
-ST_IP = "192.168.1.13"
-TV_IP = "192.168.1.21"
+ST_IP = "{IP}"
+TV_IP = "{IP}"
 SLEEP_TIME = 600
