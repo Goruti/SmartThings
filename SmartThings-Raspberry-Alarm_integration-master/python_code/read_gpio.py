@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import requests
 import json
 import time
+import conf
 
 def main():
     GPIO.setmode(GPIO.BCM)
@@ -79,7 +80,7 @@ def send_event(event):
             
 def send_evt(event):
     error_status = False
-    url = "http://192.168.1.252:39500"
+    url = "http://{}:{}".format(conf.ST_IP, conf.ST_PORT)
     headers = {
         'content-type': "application/json",
     }
