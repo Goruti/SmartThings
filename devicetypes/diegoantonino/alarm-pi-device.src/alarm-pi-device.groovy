@@ -15,30 +15,50 @@
  */
  
 preferences {
-        input("raspberry_mac", "string", title:"Raspberry MAC Address", required: true, displayDuringSetup: true)
+	//RPI Configuration
+	input("raspberry_mac", "string", title:"Raspberry MAC Address", required: False, displayDuringSetup: true)
 }
 
 metadata {
-  definition (name: "Alarm PI Device", namespace: "DiegoAntonino", author: "Diego Antonino") {
-    capability "alarm"
-    
-    attribute "AlarmTrigger", "string"
-    attribute "hubInfo", "enum", ["online", "offline"]
-  }
+	definition (name: "Alarm PI Device", namespace: "DiegoAntonino", author: "Diego Antonino") {
+        	capability "bridge"
+            capability "alarm"
+            
+            attribute "temperature", "string"
+            attribute "cpuPercentage", "string"
+            attribute "memory", "string"
+            attribute "diskUsage", "string"
+            attribute "hubInfo", "enum", ["online", "offline"]
 
-  simulator {
+      		attribute "AlarmTrigger", "string"
+      		
+	}
+
+	simulator {
     // TODO: define status and reply messages here
-  }
+	}
 
-  tiles(scale: 2) {
-      standardTile("hubInfo", "device.hubInfo", width: 6, height: 4) {
-        state "online", label:'${name}', backgroundColor: "#79b821", icon: "st.Electronics.electronics1"
-        state "offline", label:'${name}', backgroundColor: "#79b821", icon: "st.Electronics.electronics1"
-      }
-
-      main('hubInfo')
-      details(["hubInfo"])
-  }
+	tiles(scale: 2) {
+		standardTile("hubInfo", "device.hubInfo", width: 4, height: 4) {
+			state "online", label:'${name}', backgroundColor: "#79b821", icon: "st.Electronics.electronics1"
+        	state "offline", label:'${name}', backgroundColor: "#79b821", icon: "st.Electronics.electronics1"
+		}
+		valueTile("temperature", "device.temperature", width: 2, height: 1) {
+			state "temperature", label:'${currentValue}°C\nCPU Temp', unit:"C"
+		}
+		valueTile("cpuPercentage", "device.cpuPercentage", width: 2, height: 1) {
+			state "default", label:'${currentValue}%\nCPU Usage', unit:"Percent"
+		}
+		valueTile("memory", "device.memory", width: 2, height: 1) {
+			state "default", label:'${currentValue} MB\nFree Memory', unit:"MB"
+		}
+		valueTile("diskUsage", "device.diskUsage", width: 2, height: 1) {
+			state "default", label:'${currentValue}\nFree Disk', unit:"Percent"
+    	}      
+        
+		main('hubInfo')
+		details(["hubInfo", "temperature", "cpuPercentage", "memory" , "diskUsage"])
+	}
 }
 
 def installed() {
@@ -48,12 +68,13 @@ def installed() {
 def updated() {
 	updateSettings()
 }
-// ------------------------------------------------------------------
+
 def updateSettings(){
     setDeviceNetworkId(raspberry_mac)
-    //sendEvent(name: "hubInfo", value: "offline")
     sendEvent(name: "hubInfo", value: "online")
 }
+
+// ------------------------------------------------------------------
 
 def parse(String description){
     def msg = parseLanMessage(description)
