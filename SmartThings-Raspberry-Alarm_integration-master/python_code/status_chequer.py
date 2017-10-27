@@ -29,8 +29,8 @@ def get_send_rpi_stats():
         "body": {
             "temperature": temp,
             "cpuPercentage": cpu,
-            "memory": memory.percent(),
-            "diskUsage": disk.percent(),
+            "memory": memory.percent,
+            "diskUsage": disk.percent,
             #"hubInfo": "online"
         }
     }
