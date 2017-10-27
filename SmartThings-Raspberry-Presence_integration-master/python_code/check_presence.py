@@ -17,7 +17,7 @@ def main():
         sock = bluez.hci_open_dev(dev_id)
         print "{} - ble thread started".format(datetime.now())
     except Exception as e:
-        print "{} - error accessing bluetooth device. Error: {}".foramt(datetime.now(), e)
+        print "{} - error accessing bluetooth device. Error: {}".format(datetime.now(), e)
         sys.exit(1)
 
     blescan.hci_le_set_scan_parameters(sock)
