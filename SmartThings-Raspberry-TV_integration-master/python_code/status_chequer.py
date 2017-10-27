@@ -9,15 +9,12 @@ import os
 def main():
     print "Stating 'Status Chequer'"
     TV_STATUS = ''
-    RPI_STATUS = ''
-
     try:
         while True:
             #check TV status
             TV_STATUS = check_tv_status(TV_STATUS)
-            RPI_STATUS = get_send_rpi_stats(RPI_STATUS)
+            get_send_rpi_stats()
             time.sleep(conf.SLEEP_TIME)
-
     except Exception as e:
         print "Error in Status Chequer. Error:".format(e)
 
