@@ -3,6 +3,7 @@ import requests
 import json
 import time
 import conf
+import status_chequer
 
 def main():
     GPIO.setmode(GPIO.BCM)
@@ -29,13 +30,19 @@ def main():
     print "Initial State: {}".format(alarm)
     for key, value in alarm.iteritems():
         send_event(json.dumps({
-            'sensor_name': key,
-            'sensor_status': value}))
+            'type': 'alarm_status',
+            'body': {
+                'sensor_name': key,
+                'sensor_status': value
+            }
+        }))
         time.sleep(1)
 
     try:
         while True:
-            pass
+            event = status_chequer.get_send_rpi_stats()
+            send_event(json.dumps(event))
+            time.sleep(conf.SLEEP_TIME)
 
     except (Exception, KeyboardInterrupt, SystemExit):
         print "\nEnding Loop"
