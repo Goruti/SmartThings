@@ -62,7 +62,7 @@ def my_callback(pin):
 def notify_hub(sensor_name, sensor_status):
     alarm[sensor_name] = sensor_status
     send_event(json.dumps({
-        'event_type': 'alarm_status',
+        'type': 'alarm_status',
         'body': {
             'sensor_name': sensor_name,
             'sensor_status': sensor_status
