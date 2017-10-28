@@ -37,13 +37,8 @@ def main():
         while True:
             pass
 
-    except (KeyboardInterrupt, SystemExit):
+    except (Exception, KeyboardInterrupt, SystemExit):
         print "\nEnding Loop"
-
-    except:
-        raise
-
-    finally:
         print "Cleaning GPIO"
         GPIO.cleanup()           # clean up GPIO on normal exit
 
