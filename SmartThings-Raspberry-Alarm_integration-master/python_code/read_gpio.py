@@ -25,8 +25,8 @@ def main():
     alarm = {}
     for pin in channels:
         alarm.update({channel_def.get(pin): status_names[GPIO.input(pin)]})
+
     print "Initial State: {}".format(alarm)
-    
     for key, value in alarm.iteritems():
         send_event(json.dumps({
             'sensor_name': key,
