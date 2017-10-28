@@ -33,8 +33,8 @@ metadata {
 
   tiles {
 		standardTile("presence", "device.presence", width: 3, height: 2) {
-			state("present", label:'${name}', canChangeIcon: false, canChangeBackground: true)
-			state("not present", label:'${name}', canChangeIcon: false, canChangeBackground: true)
+			state("present", label:'${name}', backgroundColor:"#00a0dc", canChangeIcon: false, canChangeBackground: true)
+			state("not present", label:'${name}', backgroundColor:"#cccccc", canChangeIcon: false, canChangeBackground: true)
 		}
 		main "presence"
 		details "presence"

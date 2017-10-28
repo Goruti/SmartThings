@@ -84,18 +84,6 @@ def parse(String description){
     log.debug content
 
     switch (content.type) {
-        case "presence_status":
-        	log.debug "trigger PresenceTrigger  event"
-            createEvent(name: "PresenceTrigger", value: "${content.body.person}.${content.body.status}")
-            break
-            
-        case "tv_status":
-            log.debug "trigger TvTrigger event"
-            def ip = content.body.device
-            def dev_dni = convertIPtoHex(ip)
-            createEvent(name: "TvTrigger", value: "${dev_dni}.${content.body.status}")
-            break
-            
         case "rpi_status":
             log.debug "trigger rpi_status event"
             sendEvent(name: "temperature", value: "${content.body.temperature}")
@@ -104,7 +92,23 @@ def parse(String description){
             sendEvent(name: "diskUsage", value: "${content.body.diskUsage}")
             sendEvent(name: "hubInfo", value: "${content.body.hubInfo}")
             break
-
+            
+        case "alarm_status":
+            createEvent(name: "AlarmTrigger", value: "${content.body.sensor_name}.${content.body.sensor_status}")
+            break
+            
+        case "tv_status":
+            log.debug "trigger TvTrigger event"
+            def ip = content.body.device
+            def dev_dni = convertIPtoHex(ip)
+            createEvent(name: "TvTrigger", value: "${dev_dni}.${content.body.status}")
+            break
+        
+        case "presence_status":
+        	log.debug "trigger PresenceTrigger  event"
+            createEvent(name: "PresenceTrigger", value: "${content.body.person}.${content.body.status}")
+            break
+            
         default:
             log.debug "event type '${content.type}' is not defined"
     }

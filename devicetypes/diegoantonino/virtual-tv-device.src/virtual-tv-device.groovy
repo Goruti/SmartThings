@@ -59,10 +59,10 @@ metadata {
 
   tiles(scale: 2) {
   	  standardTile("switch", "device.switch", inactiveLabel: true,  width: 6, height: 4) {
-        state "off", label: '${name}', action: "on", icon: "st.Electronics.electronics18", backgroundColor: "#ff3f34", nextState:"turningOn"
-        state "on", label: '${name}', action: "off", icon: "st.Electronics.electronics18", backgroundColor: "#79b821", nextState:"turningOff"
-        state "turningOn", label:'Turning on', icon:"st.Electronics.electronics18", backgroundColor:"#79b821", nextState: "on"
-    	state "turningOff", label:'Turning off', icon:"st.Electronics.electronics18", backgroundColor:"#ff3f34", nextState: "off"
+        state "off", label: '${name}', action: "on", icon: "st.Electronics.electronics18", backgroundColor: "#ffffff", nextState:"turningOn"
+        state "on", label: '${name}', action: "off", icon: "st.Electronics.electronics18", backgroundColor: "#00a0dc", nextState:"turningOff"
+        state "turningOn", label:'Turning on', icon:"st.Electronics.electronics18", backgroundColor:"#00a0dc", nextState: "on"
+    	state "turningOff", label:'Turning off', icon:"st.Electronics.electronics18", backgroundColor:"#ffffff", nextState: "off"
       }
       standardTile("refresh", "device.switch", inactiveLabel: true, decoration: "flat",  width: 6, height: 2) {
 		state "default", action:"refresh", icon:"st.secondary.refresh-icon"
