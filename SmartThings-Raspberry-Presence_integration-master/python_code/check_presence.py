@@ -36,8 +36,8 @@ def main():
 
 def worker(key, value, sock):
     print "Starting Thread {}".format(key)
-    NUMBER_OF_CHECK = 12
-    SLEEP_TIME = 5
+    NUMBER_OF_CHECK = 50
+    SLEEP_TIME = 1
     COUNT = 0
 
     while True:
