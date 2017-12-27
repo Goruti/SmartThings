@@ -1,3 +1,4 @@
-ST_IP = "{IP}"
-ST_PORT = "{PORT}"
-SLEEP_TIME = 600
+configuration = {
+    'SLEEP_TIME': 600,
+    'ST_IP': 'IP',
+}

@@ -1,14 +1,16 @@
-from flask import Flask, request, json
-import requests
-from flask_httpauth import HTTPBasicAuth
 import json
 import os
-#import cec_send_data
+# import cec_send_data
 import subprocess
-import lg_API
-import conf
+
 import time
-import status_chequer
+from flask import Flask, request, json
+from flask_httpauth import HTTPBasicAuth
+
+import lg_API
+from python_common_tools.tools import get_st_ip
+from conf import configuration
+
 
 auth = HTTPBasicAuth()
 app = Flask(__name__)
@@ -16,9 +18,8 @@ app = Flask(__name__)
 
 @auth.get_password
 def get_password(username):
-    username_password = conf.UserPass()
-    if username == username_password[0]:
-        return username_password[1]
+    if username == configuration["USERNAME"]:
+        return configuration["PASSWORD"]
     return None
 
 
@@ -121,7 +122,6 @@ def check_status(ip):
         else json.dumps({'device': ip, 'status': 'on'})
 
 
-
 def select_tv_input(tv_ip):
     time.sleep(30)
     err_code, message = lg_API.ControlAction(tv_ip, "27")
@@ -131,38 +131,18 @@ def select_tv_input(tv_ip):
     err_code, message = lg_API.ControlAction(tv_ip, "20")
 
 
-def send_event(event):
-    i = 0
-    send_flag = True
-    #print "event: ", event
-
-    while send_flag and i < 5:
-        send_flag = send_evt(event)
-        if send_flag:
-            i += 1
-            print "{} send".format(i)
-
-
-def send_evt(event):
-    error_status = False
-    url = "http://{}:39500".format(conf.ST_IP)
-    headers = {
-        'content-type': "application/json",
-    }
-    try:
-        r = requests.post(url, data=event, headers=headers)
-    except requests.exceptions.RequestException as e:
-        print e
-        error_status = True
-    else:
-        if r.status_code != 202:
-            print "Post Error Code: {}, Post Error Message: {}".format(r.status_code, r.text)
-            error_status = True
-    return error_status
-
-
 if __name__ == '__main__':
-    os.system("python /home/pi/git/SmartThings/SmartThings-Raspberry-TV_integration-master/python_code/status_chequer.py 2>&1 | logger &")
+    ST_IP = get_st_ip()
+
+    if not ST_IP:
+        print "Smartthings Hub is not UP"
+        exit(1)
+    configuration["ST_IP"] = ST_IP
+    with open('conf.py', 'w') as f:
+        f.write("configuration = {}".format(configuration))
+    time.sleep(1)
+
+    os.system("python /home/pi/git/SmartThings/SmartThings-Raspberry-TV_integration-master/python_code/full_status_chequer.py 2>&1 | logger &")
     app.run(host='0.0.0.0', port=5000, debug=True)
 
 
