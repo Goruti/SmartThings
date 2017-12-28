@@ -15,7 +15,7 @@ python /home/pi/git/SmartThings/SmartThings-Raspberry-TV_integration-master/pyth
 
 echo "GETTING ST IP"
 ip=`sudo nmap -n 192.168.1.0/24 -p39500 --open | grep "Nmap scan report for"`
-ST_IP="${ip/"Nmap scan report for "/}"
+ST_IP="${ip/'Nmap scan report for '/}"
 
 if [ "$ST_IP" ]; then
     sudo sed -i -e '$i echo "Starting ping to ST hub"' /etc/rc.local
