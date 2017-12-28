@@ -3,15 +3,11 @@ import RPi.GPIO as GPIO
 import time
 
 from conf import configuration
-import sys
-sys.path.append('../../')
-from python_common_tools.tools import get_send_rpi_stats
-from python_common_tools.tools import send_event_to_st
-from python_common_tools.tools import get_st_ip
+import tools
 
 
 def main():
-    ST_IP = get_st_ip()
+    ST_IP = tools.get_st_ip()
 
     if not ST_IP:
         print "Smartthings Hub is not UP"
@@ -44,7 +40,7 @@ def main():
 
     print "Initial State: {}".format(alarm)
     for key, value in alarm.iteritems():
-        send_event_to_st(json.dumps({
+        tools.send_event_to_st(json.dumps({
             'type': 'alarm_status',
             'body': {
                 'sensor_name': key,
@@ -55,8 +51,8 @@ def main():
 
     try:
         while True:
-            event = get_send_rpi_stats()
-            send_event_to_st(json.dumps(event), configuration["ST_IP"])
+            event = tools.get_send_rpi_stats()
+            tools.send_event_to_st(json.dumps(event), configuration["ST_IP"])
             time.sleep(configuration["SLEEP_TIME"])
 
     except (Exception, KeyboardInterrupt, SystemExit):
@@ -78,43 +74,13 @@ def my_callback(pin):
 
 def notify_hub(sensor_name, sensor_status):
     alarm[sensor_name] = sensor_status
-    send_event_to_st(json.dumps({
+    tools.send_event_to_st(json.dumps({
         'type': 'alarm_status',
         'body': {
             'sensor_name': sensor_name,
             'sensor_status': sensor_status
         }
     }), configuration["ST_IP"])
-
-
-#ef send_event(event):
-#   i = 0
-#   send_flag = True
-#   #print "event: ", event
-#
-#   while send_flag and i < 5:
-#       send_flag = send_evt(event)
-#       if send_flag:
-#           i += 1
-#           print "{} send".format(i)
-#
-#
-#ef send_evt(event):
-#   error_status = False
-#   url = "http://{}:{}".format(conf.ST_IP, conf.ST_PORT)
-#   headers = {
-#       'content-type': "application/json",
-#   }
-#   try:
-#       r = requests.post(url, data=event, headers=headers)
-#   except requests.exceptions.RequestException as e:
-#       print e
-#       error_status = True
-#   else:
-#       if r.status_code != 202:
-#           print "Post Error Code: {}, Post Error Message: {}".format(r.status_code, r.text)
-#           error_status = True
-#   return error_status
 
 
 if __name__ == "__main__":
