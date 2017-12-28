@@ -3,6 +3,7 @@
 sudo apt-get install -y python-pip nmap
 sudo pip install psutil requests python-nmap
 
+sudo sed -i -e '$i echo "Starting Read GPIO Server"' /etc/rc.local
 sudo sed -i -e '$i python /home/pi/git/SmartThings/SmartThings-Raspberry-Alarm_integration-master/python_code/read_gpio.py  2>&1 | logger &\n' /etc/rc.local
 echo "Starting Read GPIO Server"
 python /home/pi/git/SmartThings/SmartThings-Raspberry-Alarm_integration-master/python_code/read_gpio.py  2>&1 | logger &
