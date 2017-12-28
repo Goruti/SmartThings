@@ -173,12 +173,13 @@ def get_tv_ip():
 
 
 if __name__ == '__main__':
-    #  GET ST IP
+    print "GETTING Smartthings IP"
     get_smartthing_ip()
-    #  GET TV IP
+    print "GETTING TV IP"
     get_tv_ip()
-
+    print "STARTING FULL STATUS CHEQUER"
     os.system("python /home/pi/git/SmartThings/SmartThings-Raspberry-TV_integration-master/python_code/full_status_chequer.py 2>&1 | logger &")
+    print "STARTING FLASK SERVER"
     app.run(host='0.0.0.0', port=5000, debug=True)
 
 
