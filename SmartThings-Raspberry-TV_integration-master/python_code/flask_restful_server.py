@@ -149,7 +149,7 @@ def get_smartthing_ip():
 
 
 def get_tv_ip():
-    tv_search_query = "schemas-upnp-org:service:AVTransport:1"
+    tv_search_query = "ssdp:all"
     for device in ssdp.discover(tv_search_query):
         location = device.location
         device = ET.fromstring(requests.get(location).text)[1]
@@ -159,6 +159,7 @@ def get_tv_ip():
                             device[7].text == 'LG Electronics' and \
                             device[10].text == 'LG TV':
                 tv_ip = urlparse(location).netloc.split(":")[0]
+                break
 
     if not tv_ip:
         print "TV is OFF, please turn on your LG TV"
