@@ -4,13 +4,13 @@ import time
 import sys
 import blescan
 import bluetooth._bluetooth as bluez
-import check_presence_conf
+import conf
 from datetime import datetime
 import threading
 
 
 def main():
-    PHONES_STATUS = check_presence_conf.PHONES
+    PHONES_STATUS = conf.PHONES
 
     dev_id = 0
     try:
@@ -96,7 +96,7 @@ def send_event(event):
             
 def send_evt(event):
     error_status = False
-    url = "{}{}{}".format("http://", check_presence_conf.ST_IP, ":39500")
+    url = "{}{}{}".format("http://", conf.ST_IP, ":39500")
     headers = {
         'content-type': "application/json",
     }

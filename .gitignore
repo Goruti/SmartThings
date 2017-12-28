@@ -1,6 +1,6 @@
 *.iml
 *.pyc
 /.idea/
-/SmartThings-Raspberry-Presence_integration-master/python_code/check_presence_conf.py
+/SmartThings-Raspberry-Presence_integration-master/python_code/conf.py
 /SmartThings-Raspberry-Alarm_integration-master/python_code/conf.py
 /SmartThings-Raspberry-TV_integration-master/python_code/conf.py
