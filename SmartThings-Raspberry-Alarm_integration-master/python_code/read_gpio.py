@@ -3,6 +3,8 @@ import RPi.GPIO as GPIO
 import time
 
 from conf import configuration
+import sys
+sys.path.append('../../')
 from python_common_tools.tools import get_send_rpi_stats
 from python_common_tools.tools import send_event_to_st
 from python_common_tools.tools import get_st_ip

@@ -10,11 +10,12 @@ python /home/pi/git/SmartThings/SmartThings-Raspberry-Alarm_integration-master/p
 
 echo "GETTING ST IP"
 ip=`sudo nmap -n 192.168.1.0/24 -p39500 --open | grep "Nmap scan report for"`
-ST_IP="${ip/"Nmap scan report for "/}"
+ST_IP="${ip/'Nmap scan report for '/}"
 
 if [ "$ST_IP" ]; then
-    sudo sed -i -e "$i sleep 20; /bin/ping $ST_IP > /dev/null 2>&1 &\n" /etc/rc.local;
-    echo "Starting ping to ST hub";
+    sudo sed -i -e '$i echo "Starting ping to ST hub"' /etc/rc.local
+    sudo sed -i -e "\$i sleep 20; /bin/ping $ST_IP > /dev/null 2>&1 &\n" /etc/rc.local
+    echo "Starting ping to ST hub at $ST_IP"
     /bin/ping $ST_IP > /dev/null 2>&1 &
 else
     echo "Smartthings Hub is not UP"

@@ -1,13 +1,13 @@
 import json
 import os
-# import cec_send_data
 import subprocess
-
 import time
 from flask import Flask, request, json
 from flask_httpauth import HTTPBasicAuth
 
 import lg_API
+import sys
+sys.path.append('../../')
 from python_common_tools.tools import get_st_ip
 from conf import configuration
 import ssdp
