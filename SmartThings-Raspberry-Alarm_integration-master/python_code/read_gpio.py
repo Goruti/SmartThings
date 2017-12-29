@@ -7,16 +7,10 @@ import tools
 
 
 def main():
-    ST_IP = tools.get_st_ip()
+    print "GETTING Smartthings IP"
+    tools.get_smartthing_ip()
 
-    if not ST_IP:
-        print "Smartthings Hub is not UP"
-        exit(1)
-    configuration["ST_IP"] = ST_IP
-    with open('conf.py', 'w') as f:
-        f.write("configuration = {}".format(configuration))
-    time.sleep(1)
-
+    print "Going to the main process"
     GPIO.setmode(GPIO.BCM)
     #channels = [12, 16, 20, 21]  # pins 32, 36, 38, 40
     #channel_names = ['zone01', 'zone02', 'zone03', 'zone04']

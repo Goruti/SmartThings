@@ -2,6 +2,9 @@ import requests
 import psutil
 import os
 import nmap
+import time
+from conf import configuration
+import re
 
 
 def get_send_rpi_stats():
@@ -53,13 +56,26 @@ def __send_evt__(event, st_ip):
     return tx_error
 
 
-def get_st_ip():
+def get_smartthing_ip():
+    st_ip = __get_st_ip__()
+    st_ip_conf = configuration["ST_IP"]
+    ip_match = re.match(r'^((\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$', st_ip_conf)
+    if not st_ip and not ip_match:
+        print "Smartthings Hub is DOWN"
+        exit(1)
+
+    if st_ip_conf != st_ip:
+        configuration["ST_IP"] = st_ip
+        with open('conf.py', 'w') as f:
+            f.write("configuration = {}".format(configuration))
+        time.sleep(1)
+
+
+def __get_st_ip__():
     ST_IP = None
     nm = nmap.PortScanner()
     nm.scan(hosts='192.168.1.0/24', arguments='-p39500 --open')
     if nm.all_hosts():
         ST_IP = nm.all_hosts()[0]
-    else:
-        print "Smartthings Hub is not UP"
     return ST_IP
 

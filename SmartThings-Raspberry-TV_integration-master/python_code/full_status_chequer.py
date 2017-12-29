@@ -24,7 +24,7 @@ def check_tv_status(status):
     if status != resp.get("status"):
         status = resp.get("status")
         answer = {"type": "tv_status", "body": resp}
-        tools.send_event_to_st(json.dumps(answer), configuration["ST_IP"])
+        tools.send_event_to_st(json.dumps(answer), tv_ip)
         return status
 
 
