@@ -91,6 +91,8 @@ def __get_st_ip__():
 
 
 def get_tv_ip():
+    tv_ip_conf = configuration["TV_IP"]
+    ip_match = re.match(r'^((\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$', tv_ip_conf)
     tv_search_query = "ssdp:all"
     for device in ssdp.discover(tv_search_query):
         location = device.location
@@ -103,7 +105,7 @@ def get_tv_ip():
                 tv_ip = urlparse(location).netloc.split(":")[0]
                 break
 
-    if not tv_ip:
+    if not tv_ip and not ip_match:
         print "TV is OFF, please turn on your LG TV"
         exit(1)
 
