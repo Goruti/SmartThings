@@ -76,7 +76,8 @@ def get_smartthing_ip():
 
     if st_ip_conf != st_ip:
         configuration["ST_IP"] = st_ip
-        with open('conf.py', 'w') as f:
+        path = os.path.dirname(os.path.realpath(__file__))
+        with open('{}/conf.py'.format(path), 'w') as f:
             f.write("configuration = {}".format(configuration))
         time.sleep(1)
 
@@ -111,6 +112,7 @@ def get_tv_ip():
 
     if configuration["TV_IP"] != tv_ip:
         configuration["TV_IP"] = tv_ip
-        with open('conf.py', 'w') as f:
+        path = os.path.dirname(os.path.realpath(__file__))
+        with open('{}/conf.py'.format(path), 'w') as f:
             f.write("configuration = {}".format(configuration))
         time.sleep(1)
