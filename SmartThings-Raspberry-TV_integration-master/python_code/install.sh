@@ -3,18 +3,6 @@
 sudo apt-get install -y cec-utils python-pip nmap
 sudo pip2 install flask_httpauth python-nmap
 
-sudo sed -i -e '$i echo "Starting Flask Server"' /etc/rc.local
-sudo sed -i -e '$i python /home/pi/git/SmartThings/SmartThings-Raspberry-TV_integration-master/python_code/flask_restful_server.py  2>&1 | logger &\n' /etc/rc.local
-
-echo "*********************************************************"
-echo "Please set you passwords in \
-'/home/pi/git/SmartThings/SmartThings-Raspberry-TV_integration-master/python_code/conf.py' file"
-echo "*********************************************************"
-
-echo "Starting Flask Server"
-python /home/pi/git/SmartThings/SmartThings-Raspberry-TV_integration-master/python_code/flask_restful_server.py  2>&1 | logger &
-
-
 echo "GETTING ST IP"
 ip=`sudo nmap -n 192.168.1.0/24 -p39500 --open | grep "Nmap scan report for"`
 ST_IP="${ip/'Nmap scan report for '/}"
@@ -25,5 +13,16 @@ if [ "$ST_IP" ]; then
     echo "Starting ping to ST hub at $ST_IP"
     /bin/ping $ST_IP > /dev/null 2>&1 &
 else
-    echo "Smartthings Hub is not UP"
+    echo "Smartthings Hub is DOWN"
 fi
+
+sudo sed -i -e '$i echo "Starting Flask Server"' /etc/rc.local
+sudo sed -i -e '$i python /home/pi/git/SmartThings/SmartThings-Raspberry-TV_integration-master/python_code/flask_restful_server.py  2>&1 | logger &\n' /etc/rc.local
+
+echo "*********************************************************"
+echo "Please set you passwords in \
+'/home/pi/git/SmartThings/SmartThings-Raspberry-TV_integration-master/python_code/conf.py' file"
+echo "*********************************************************"
+
+echo "Starting Flask Server"
+python /home/pi/git/SmartThings/SmartThings-Raspberry-TV_integration-master/python_code/flask_restful_server.py  2>&1 | logger &
