@@ -19,12 +19,11 @@ def main():
 
 
 def check_tv_status(status):
-    tv_ip = configuration["TV_IP"]
-    resp = json.loads(tools.check_status(tv_ip))
+    resp = json.loads(tools.check_status(configuration["TV_IP"]))
     if status != resp.get("status"):
         status = resp.get("status")
         answer = {"type": "tv_status", "body": resp}
-        tools.send_event_to_st(json.dumps(answer), tv_ip)
+        tools.send_event_to_st(json.dumps(answer), configuration["ST_IP"])
         return status
 
 
