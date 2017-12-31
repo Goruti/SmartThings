@@ -5,7 +5,7 @@ import tools
 
 
 def main():
-    print "Stating 'FULL Status Chequer'"
+    print "Starting 'FULL Status Chequer'"
     TV_STATUS = ''
     try:
         while True:
