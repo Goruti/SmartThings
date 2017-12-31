@@ -81,7 +81,7 @@ def parse(String description){
     def msg = parseLanMessage(description)
     def content = msg.json
 
-    log.debug content
+    log.debug "received: ${content}"
 
     switch (content.type) {
         case "rpi_status":
