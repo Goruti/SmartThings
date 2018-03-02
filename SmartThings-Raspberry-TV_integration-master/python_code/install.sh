@@ -2,6 +2,7 @@
 
 sudo apt-get install -y cec-utils python-pip nmap
 sudo pip2 install flask_httpauth python-nmap
+sudo pip install netifaces
 
 echo "GETTING ST IP"
 ip=`sudo nmap -n 192.168.2.0/24 -p39500 --open | grep "Nmap scan report for"`
