@@ -69,7 +69,11 @@ def check_status(ip):
 def get_smartthing_ip():
     st_ip = __get_st_ip__()
     st_ip_conf = configuration["ST_IP"]
-    ip_match = re.match(r'^((\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$', st_ip_conf)
+    ip_match = None
+    
+    if st_ip_conf:
+        ip_match = re.match(r'^((\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d{2}|2[0-4]\d|25[0-5])$', st_ip_conf)
+        
     if not st_ip and not ip_match:
         print "Smartthings Hub is DOWN"
         exit(1)
