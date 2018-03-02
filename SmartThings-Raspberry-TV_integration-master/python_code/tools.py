@@ -2,6 +2,8 @@ import requests
 import psutil
 import os
 import nmap
+import netifaces
+import ipaddress
 import json
 import time
 from urlparse import urlparse
@@ -88,8 +90,12 @@ def get_smartthing_ip():
 
 def __get_st_ip__():
     ST_IP = None
+    #get my own IP address, mask and network
+    ip = netifaces.ifaddresses('eth0')[2][0]
+    interface = ipaddress.IPv4Interface(u"{}/{}".format(ip.get('addr'), ip.get('netmask')))
+    
     nm = nmap.PortScanner()
-    nm.scan(hosts='192.168.2.0/24', arguments='-p39500 --open')
+    nm.scan(hosts=str(interface.network), arguments='-p39500 --open')
     if nm.all_hosts():
         ST_IP = nm.all_hosts()[0]
     return ST_IP
