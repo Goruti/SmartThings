@@ -80,7 +80,7 @@ def get_smartthing_ip():
         print "Smartthings Hub is DOWN"
         exit(1)
 
-    if st_ip_conf != st_ip:
+    if st_ip and st_ip_conf != st_ip:
         configuration["ST_IP"] = st_ip
         path = os.path.dirname(os.path.realpath(__file__))
         with open('{}/conf.py'.format(path), 'w') as f:
@@ -126,7 +126,7 @@ def get_tv_ip():
         print "TV is OFF, please turn on your LG TV"
         exit(1)
 
-    if configuration["TV_IP"] != tv_ip:
+    if tv_ip and configuration["TV_IP"] != tv_ip:
         configuration["TV_IP"] = tv_ip
         path = os.path.dirname(os.path.realpath(__file__))
         with open('{}/conf.py'.format(path), 'w') as f:
