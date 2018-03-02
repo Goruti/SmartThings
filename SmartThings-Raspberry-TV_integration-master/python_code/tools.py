@@ -85,7 +85,7 @@ def get_smartthing_ip():
 def __get_st_ip__():
     ST_IP = None
     nm = nmap.PortScanner()
-    nm.scan(hosts='192.168.1.0/24', arguments='-p39500 --open')
+    nm.scan(hosts='192.168.2.0/24', arguments='-p39500 --open')
     if nm.all_hosts():
         ST_IP = nm.all_hosts()[0]
     return ST_IP
