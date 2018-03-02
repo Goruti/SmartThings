@@ -6,8 +6,7 @@ sudo pip install netifaces
 
 echo "GETTING ST IP"
 net=`ip addr show | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*/[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*/[0-9]*' | grep -v '127.0.0.1'`
-ip=`sudo nmap -n $net -p39500 --open | grep "Nmap scan report for"`
-ST_IP="${ip/'Nmap scan report for '/}"
+ST_IP=`sudo nmap -n $net -p39500 --open | grep  -Eo '([0-9]*\.){3}[0-9]*'`
 
 if [ "$ST_IP" ]; then
     sudo sed -i -e '$i echo "Starting ping to ST hub"' /etc/rc.local
