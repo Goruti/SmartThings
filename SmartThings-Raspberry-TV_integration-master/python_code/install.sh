@@ -5,7 +5,8 @@ sudo pip2 install flask_httpauth python-nmap
 sudo pip install netifaces
 
 echo "GETTING ST IP"
-ip=`sudo nmap -n 192.168.2.0/24 -p39500 --open | grep "Nmap scan report for"`
+net=`ip addr show | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*/[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*/[0-9]*' | grep -v '127.0.0.1'`
+ip=`sudo nmap -n $net -p39500 --open | grep "Nmap scan report for"`
 ST_IP="${ip/'Nmap scan report for '/}"
 
 if [ "$ST_IP" ]; then
