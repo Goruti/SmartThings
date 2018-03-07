@@ -2,7 +2,7 @@ import requests
 import psutil
 import os
 import nmap
-import netifaces
+from netifaces import interfaces, ifaddresses, AF_INET
 import ipaddress
 import json
 import time
@@ -91,7 +91,13 @@ def get_smartthing_ip():
 def __get_st_ip__():
     ST_IP = None
     #get my own IP address, mask and network
-    ip = netifaces.ifaddresses('eth0')[2][0]
+    for ifaceName in interfaces():
+        if ifaceName != 'lo':
+            interface_info = ifaddresses(ifaceName).setdefault(AF_INET)
+            if interface_info:
+                ip = interface_info[0]['addr']
+        
+    
     interface = ipaddress.IPv4Interface(u"{}/{}".format(ip.get('addr'), ip.get('netmask')))
     
     nm = nmap.PortScanner()
