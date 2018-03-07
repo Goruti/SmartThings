@@ -95,7 +95,7 @@ def __get_st_ip__():
         if ifaceName != 'lo':
             interface_info = ifaddresses(ifaceName).setdefault(AF_INET)
             if interface_info:
-                ip = interface_info[0]['addr']
+                ip = interface_info[0]
         
     
     interface = ipaddress.IPv4Interface(u"{}/{}".format(ip.get('addr'), ip.get('netmask')))
