@@ -66,8 +66,10 @@ def motionDetectedHandler(evt) {
     }
     
     else if (curMode == "Night") {
-            dimmerNight.setLevel(brightness)
+	    if (dimmerNight && brightness) {
+		    dimmerNight.setLevel(brightness)
 		    log.debug "In Night Mode; setting brightness: $brightness"
+	    }
     }
     else { //Home is in away mode, do nothing
     	log.debug "Home is in Away mode, doing nothing"
