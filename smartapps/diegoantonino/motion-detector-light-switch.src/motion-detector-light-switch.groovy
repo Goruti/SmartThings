@@ -44,7 +44,7 @@ preferences {
         input "SwitchSecondsOff", "number", required: true, title: "Seconds?"
     }
     section("Dimmer Level for night") {
-        input "dimmerLevel", "number", required: true, title: "Level?"
+        input "dimmerLevel", "number", required: false, title: "Level?"
     }
     section("Select Home Modes...") {
         input "HomeMode", "mode", required: false, title: "Home Modes?", multiple: true
@@ -74,12 +74,13 @@ def motionDetectedHandler(evt) {
     def curMode = location.mode
     
     if (HomeMode?.find{it == curMode}) {
-    	log.debug "Switch Light on"
-		dimmer.setLevel(100)
+	    log.debug "Switch Light on"
+	    dimmer.setLevel(100)
     }
     else if (NightMode?.find{it == curMode}) {
-    	log.debug "Switch Light on"
-    	dimmer.setLevel(dimmerLevel)		
+	    if (dimmerLevel) {
+		    dimmer.setLevel(dimmerLevel)
+	    }	
     }
     runIn(SwitchSecondsOn, checkMotion)
 }
