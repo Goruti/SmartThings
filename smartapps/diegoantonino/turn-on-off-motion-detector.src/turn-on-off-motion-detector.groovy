@@ -33,13 +33,10 @@ preferences {
     section("Turn on this light when Mode is Home") {
         input "switchHome", "capability.switch", required: true
     }
- //   section("Turn on this light when Mode is Night") {
- //       input "switchNight", "capability.switch", required: false
-  //  }
     section("Dimmer to make bright when Mode is Night") {
-		input "dimmerNight", "capability.switchLevel", title: "Which dimmer?", required: false
-		input "brightness", "number", title: "Light Level", required: false
-	}
+	    input "dimmerNight", "capability.switchLevel", title: "Which dimmer?", required: false
+	    input "brightness", "number", title: "Light Level", required: false
+    }
 }
 
 def installed() {
