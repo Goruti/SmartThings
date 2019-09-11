@@ -1,5 +1,5 @@
 /**
- *  Illuminance Sensor TSL2561 connected to a PyCom (it used the RPI to check if it's online or not)
+ *  Illuminance Sensor TSL2561 connected to a PyCom
  *
  *  Copyright 2017 Diego Antonino
  *
@@ -16,19 +16,15 @@
  
 preferences {
 		input("pycom_mac", "string", title:"PyCom MAC", required: true, displayDuringSetup: true)
-		input("pycom_ip", "string", title: "PyCom IP", required: false, displayDuringSetup: true)
-		input("raspberry_ip", "string", title: "Raspberry-ip", required: false, displayDuringSetup: true)
-		input("raspberry_port", "string", title: "Raspberry-port", required: false, displayDuringSetup: true)
-		input("username", "string", title: "Username", required: false, displayDuringSetup: true)
-		input("password", "password", title: "Password", required: false, displayDuringSetup: true)
+		input("pycom_ip", "string", title: "PyCom IP", required: true, displayDuringSetup: true)
 }
 
 metadata {
   definition (name: "Illuminance Sensor", namespace: "DiegoAntonino", author: "Diego Antonino") {
     capability "illuminanceMeasurement"
     capability "Sensor"
+    capability "Health Check"
     
-	attribute "status", "enum", ["online", "offline"]
 	attribute "illuminance", "number"
   }
 
@@ -36,17 +32,13 @@ metadata {
     // TODO: define status and reply messages here
   }
 
-  tiles(scale: 2) {
-	standardTile("status", "device.status", decoration: "flat", width: 6, height: 2) {
-		state  "online", label:'${name}', action:"refresh", icon: "st.illuminance.illuminance.bright", backgroundColor: "#44b621"
-		state  "offline", label:'${name}', action:"refresh", icon: "st.illuminance.illuminance.bright", backgroundColor: "#bc2323"
-	}
+  tiles(scale: 2) {    
 	valueTile("lux", "device.illuminance", decoration: "flat", width: 6, height: 1) {
 		state  "value", label:'${currentValue} lux'
 	}
 
       main('lux')
-      details(["status", "lux"])
+      //details("lux")
   }
 }
 
@@ -57,10 +49,21 @@ def installed() {
 def updated() {
 	updateSettings()
 }
+
+// NOP implementation of ping as health check only calls this for tracked devices
+// But as capability defines this method it's implemented to avoid MissingMethodException
+def ping() {
+    log.info("unexpected ping call from health check")
+}
+
 // ------------------------------------------------------------------
 def updateSettings(){
     setDeviceNetworkId(pycom_mac)
-    sendEvent(name: "status", value: "online")
+    //Device send events every 5 minutes at most, this interval allows us to miss 2 events before marking offline.
+    //checkInterval is in seconds
+	log.debug "Configured health checkInterval: ${(5 + 5)*60} seconds"
+	sendEvent(name: "checkInterval", value: (5 + 5)*60, displayed: false)
+
 }
 
 def parse(String description){
@@ -72,47 +75,15 @@ def parse(String description){
         return createEvent(name: "illuminance", value: "${body.lux}")
     }
     else {
-    	log.debug "ERROR: ", msg
+    	log.debug("ERROR - description: ${description}")
+        log.debug("ERROR - Msg: ${msg}")
     }
     
-}
-
-def refresh() {
-    log.debug "<Device Handler> Checking State"
-    def userpass = encodeCredentials(username, password)
-    def headers = getHeader(userpass)
-
-    def hubAction = new physicalgraph.device.HubAction(
-            method: "GET",
-            path: "/homesweethome/api/v1.0/device/status/${pycom_ip}",
-            headers: headers,
-    )
-
-    try {
-        return sendHubCommand(hubAction)
-    } catch (Exception e) {
-        log.debug "Hit Exception ${e} on ${hubAction}"
-    }
 }
 
 // ------------------------------------------------------------------
 // Helper methods
 // ------------------------------------------------------------------
-
-private encodeCredentials(username, password){
-    def userpass_base64 = "${username}:${password}".bytes.encodeBase64()
-    def userpass = "Basic ${userpass_base64}"
-    return userpass
-}
-
-private getHeader(userpass){
-    def headers = [
-            "HOST": "${raspberry_ip}:${raspberry_port}",
-            "Authorization": userpass,
-            "Content-Type": "application/json"
-    ]
-    return headers
-}
 
 private setDeviceNetworkId(mac){
     device.deviceNetworkId = mac
