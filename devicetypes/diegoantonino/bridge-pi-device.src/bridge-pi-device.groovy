@@ -23,6 +23,7 @@ preferences {
 metadata {
 	definition (name: "Bridge PI Device", namespace: "DiegoAntonino", author: "Diego Antonino") {
         	capability "bridge"
+            capability "Health Check"
             
             attribute "temperature", "string"
             attribute "cpuPercentage", "string"
@@ -40,10 +41,6 @@ metadata {
 	}
 
 	tiles(scale: 2) {
-		standardTile("hubInfo", "device.hubInfo", width: 4, height: 4) {
-			state "online", label:'${name}', backgroundColor: "#79b821", icon: "st.Electronics.electronics1"
-        	state "offline", label:'${name}', backgroundColor: "#79b821", icon: "st.Electronics.electronics1"
-		}
 		valueTile("temperature", "device.temperature", width: 2, height: 1) {
 			state "temperature", label:'${currentValue}°C\nCPU Temp', unit:"C"
 		}
@@ -70,9 +67,18 @@ def updated() {
 	updateSettings()
 }
 
+// NOP implementation of ping as health check only calls this for tracked devices
+// But as capability defines this method it's implemented to avoid MissingMethodException
+def ping() {
+    log.info("unexpected ping call from health check")
+    //Device send events every 5 minutes at most, this interval allows us to miss 2 events before marking offline.
+    //TODO  checkInterval is in seconds 
+	log.debug "Configured health checkInterval: ${(5 + 5)*60} seconds"
+	sendEvent(name: "checkInterval", value: (5 + 5)*60, displayed: false)
+}
+
 def updateSettings(){
     setDeviceNetworkId(raspberry_mac)
-    sendEvent(name: "hubInfo", value: "online")
 }
 
 // ------------------------------------------------------------------
