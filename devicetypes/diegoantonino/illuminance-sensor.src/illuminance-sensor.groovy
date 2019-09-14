@@ -16,7 +16,6 @@
  
 preferences {
 		input("pycom_mac", "string", title:"PyCom MAC", required: true, displayDuringSetup: true)
-		input("pycom_ip", "string", title: "PyCom IP", required: true, displayDuringSetup: true)
 }
 
 metadata {
