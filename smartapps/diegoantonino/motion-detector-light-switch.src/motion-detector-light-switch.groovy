@@ -43,16 +43,9 @@ preferences {
     section("Turn-Switch Off when there's been no movement for") {
         input "SwitchSecondsOff", "number", required: true, title: "Seconds?"
     }
-    section("Dimmer Level for night") {
-        input "dimmerLevel", "number", required: false, title: "Level?"
+    section("DO NOT run when Home Modes...") {
+        input "HomeMode", "mode", required: true, title: "Home Modes?", multiple: true
     }
-    section("Select Home Modes...") {
-        input "HomeMode", "mode", required: false, title: "Home Modes?", multiple: true
-    }
-    section("Selects Night Modes...") {
-        input "NightMode", "mode", required: false, title: "Night Mode?", multiple: true
-    }
-    
 }
 
 def installed() {
@@ -73,14 +66,9 @@ def motionDetectedHandler(evt) {
     log.debug "motionDetectedHandler called: $evt"
     def curMode = location.mode
     
-    if (HomeMode?.find{it == curMode}) {
+    if (!HomeMode?.find{it == curMode}) {
 	    log.debug "Switch Light on"
 	    dimmer.setLevel(100)
-    }
-    else if (NightMode?.find{it == curMode}) {
-	    if (dimmerLevel) {
-		    dimmer.setLevel(dimmerLevel)
-	    }	
     }
     runIn(SwitchSecondsOn, checkMotion)
 }
