@@ -13,7 +13,8 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
- 
+
+
 preferences {
 		input("pycom_mac", "string", title:"PyCom MAC", required: true, displayDuringSetup: true)
 }
@@ -25,19 +26,23 @@ metadata {
     capability "Health Check"
     
 	attribute "illuminance", "number"
+    attribute "check_in_at", "string"
   }
 
   simulator {
     // TODO: define status and reply messages here
   }
 
-  tiles(scale: 2) {    
-	valueTile("lux", "device.illuminance", decoration: "flat", width: 6, height: 1) {
-		state  "value", label:'${currentValue} lux'
+  tiles(scale: 1) {    
+	valueTile("lux", "device.illuminance", decoration: "flat", width: 3, height: 1) {
+		state  "value", label:'Illuminance\n\n${currentValue} lux'
+	}
+    standardTile("check_in_at", "device.check_in_at", inactiveLabel: true, decoration: "flat", width: 3, height: 1) {
+		state  "default", label:'Last Check-in time\n\n${currentValue}'
 	}
 
       main('lux')
-      //details("lux")
+      details(["lux", "check_in_at"])
   }
 }
 
@@ -65,13 +70,25 @@ def updateSettings(){
 
 }
 
+// MAIN FUNTON TO HANDLE MESSAGES FROM THE DEVICE
 def parse(String description){
     def msg = parseLanMessage(description)
     def body = msg.json
         
     if (body) {
-    	log.debug("${body.lux}")
-        return createEvent(name: "illuminance", value: "${body.lux}")
+    	if (body.lux) {
+            log.debug("illuminance: ${body.lux}")
+            
+            def evt_lux = createEvent(name: "illuminance", value: "${body.lux}")
+            def evt_checkIn = createEvent(name: "check_in_at", value: "${getReceivedTs()}")
+            
+            return [evt_lux, evt_checkIn]
+        }
+        if (body.check_in_at) {
+            log.debug("check_in_at: ${body.check_in_at}")
+            return createEvent(name: "check_in_at", value: "${getReceivedTs()}")
+        }
+    	
     }
     else {
     	log.debug("ERROR - description: ${description}")
@@ -83,6 +100,12 @@ def parse(String description){
 // ------------------------------------------------------------------
 // Helper methods
 // ------------------------------------------------------------------
+def getReceivedTs() {
+	def df = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    df.setTimeZone(location.timeZone)
+    
+    return df.format(new Date())
+}
 
 private setDeviceNetworkId(mac){
     device.deviceNetworkId = mac
