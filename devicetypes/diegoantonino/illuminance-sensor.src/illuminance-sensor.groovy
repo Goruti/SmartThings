@@ -25,7 +25,7 @@ metadata {
     capability "Sensor"
     capability "Health Check"
     
-	attribute "illuminance_lux", "number"
+	attribute "illuminance", "number"
     attribute "illuminance_ts", "string"
     attribute "check_in_at", "string"
   }
@@ -39,7 +39,7 @@ metadata {
     valueTile("lux_ts", "device.illuminance_ts", decoration: "flat", width: 2, height: 1) {
 		state  "value", label:'Last lux reported was at:\n\n${currentValue}'
 	}
-    valueTile("lux", "device.illuminance_lux", decoration: "flat", width: 1, height: 1) {
+    valueTile("lux", "device.illuminance", decoration: "flat", width: 1, height: 1) {
 		state  "value", label:'Lux Value\n\n${currentValue}'
 	}
     standardTile("check_in_at", "device.check_in_at", inactiveLabel: true, decoration: "flat", width: 3, height: 1) {
@@ -84,7 +84,7 @@ def parse(String description){
     	if (body.lux) {
             log.debug("illuminance: ${body.lux}")
             def received_ts = getReceivedTs()
-            def evt_lux_1 = createEvent(name: "illuminance_lux", value: "${body.lux}")
+            def evt_lux_1 = createEvent(name: "illuminance", value: "${body.lux}")
             def evt_lux_2 = createEvent(name: "illuminance_ts", value: received_ts)
             def evt_checkIn = createEvent(name: "check_in_at", value: received_ts)
             
