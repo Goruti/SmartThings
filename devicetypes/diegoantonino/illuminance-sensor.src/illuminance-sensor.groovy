@@ -81,16 +81,15 @@ def parse(String description){
     def body = msg.json
         
     if (body) {
-    	if (body.lux) {
+    	if (body.containsKey("lux")) {
             log.debug("illuminance: ${body.lux}")
             def received_ts = getReceivedTs()
             def evt_lux_1 = createEvent(name: "illuminance", value: "${body.lux}")
             def evt_lux_2 = createEvent(name: "illuminance_ts", value: received_ts)
-            def evt_checkIn = createEvent(name: "check_in_at", value: received_ts)
-            
+            def evt_checkIn = createEvent(name: "check_in_at", value: received_ts)          
             return [evt_lux_1, evt_lux_2, evt_checkIn]
-        }
-        if (body.check_in_at) {
+        } 
+        if (body.containsKey("check_in_at")) {
             log.debug("check_in_at: ${body.check_in_at}")
             return createEvent(name: "check_in_at", value: "${getReceivedTs()}")
         }
