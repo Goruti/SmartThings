@@ -23,40 +23,58 @@ metadata {
     preferences {}
 
     tiles(scale: 2) {
-        multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true){
-            tileAttribute ("device.switch", key: "PRIMARY_CONTROL") {
-                attributeState "on", label:'${name}', action:"switch.off", icon:"st.Home.home30", backgroundColor:"#00A0DC", nextState:"turningOff"
-                attributeState "off", label:'${name}', action:"switch.on", icon:"st.Home.home30", backgroundColor:"#FFFFFF", nextState:"turningOn", defaultState: true
-                attributeState "turningOn", label:'Turning On', action:"switch.off", icon:"st.Home.home30", backgroundColor:"#00A0DC", nextState:"turningOn"
-                attributeState "turningOff", label:'Turning Off', action:"switch.on", icon:"st.Home.home30", backgroundColor:"#FFFFFF", nextState:"turningOff"
+        multiAttributeTile(name:"valueTile", type:"generic", width:6, height:4) {
+            tileAttribute("device.timer", key: "PRIMARY_CONTROL") {
+                attributeState "timer", label:'${currentValue}', defaultState: true
+            }
+
+            tileAttribute("device.switch", key: "SECONDARY_CONTROL") {
+                attributeState "on", label:'${name}', action:"switch.off", icon:"st.Home.home30", backgroundColor:"#00A0DC", nextState:"turningOff", defaultState: true
+                attributeState "off", label:'${name}', action:"switch.on", icon:"st.Home.home30", backgroundColor:"#FFFFFF", nextState:"turningOn"
+                attributeState "turningOn", label:'...', action:"switch.off", icon:"st.Home.home30", backgroundColor:"#00A0DC", nextState:"turningOn"
+                attributeState "turningOff", label:'...', action:"switch.on", icon:"st.Home.home30", backgroundColor:"#FFFFFF", nextState:"turningOff"
+            }
+
+            tileAttribute ("device.timer", key: "VALUE_CONTROL") {
+                attributeState("VALUE_UP", action: "increaseTimer")
+                attributeState("VALUE_DOWN", action: "decreaseTimer")
             }
         }
-
-        standardTile("explicitOn", "device.switch", width: 2, height: 2, decoration: "flat") {
-            state "default", label: "On", action: "switch.on", icon: "st.Home.home30", backgroundColor: "#ffffff"
-        }
-        standardTile("explicitOff", "device.switch", width: 2, height: 2, decoration: "flat") {
-            state "default", label: "Off", action: "switch.off", icon: "st.Home.home30", backgroundColor: "#ffffff"
-        }
-        standardTile("timeToOff", "device.timer", width: 2, height: 2, decoration: "flat") {
-            state "default", label: "Timer", icon: "st.Home.home30", backgroundColor: "#ffffff"
-        }
-
-        main(["switch"])
-        details(["switch", "explicitOn", "explicitOff"])
 
     }
 }
 
-def parse(description) {
+def parse(String description) {
+    // This is a simulated device. No incoming data to parse.
 }
 
 def on() {
+    log.debug "turningOn"
     sendEvent(name: "switch", value: "on", isStateChange: true)
 }
 
 def off() {
+    log.debug "turningOff"
     sendEvent(name: "switch", value: "off", isStateChange: true)
+}
+
+def setLevel(time_value, rate = null) {
+    log.debug "setLevel: ${time_value}, this"
+    sendEvent(name: "timer", value: time_value)
+}
+
+def increaseTimer() {
+    def time = device.latestValue("timer") as Integer ?: 0
+    time = time + 1
+    setLevel(time)
+}
+
+def decreaseTimer() {
+    def time = device.latestValue("level") as Integer ?: 0
+    if (time > 0) {
+        time = level - 1
+    }
+    setLevel(time)
 }
 
 def installed() {
