@@ -1,5 +1,5 @@
 /**
- * Irrigation System Device
+ * Irrigation System Device Bridge
  *
  *  Copyright 2020 Diego Antonino
  *
@@ -21,7 +21,7 @@ preferences {
 }
 
 metadata {
-	definition (name: "Irrigation System Device", namespace: "DiegoAntonino", author: "Diego Antonino") {
+	definition (name: "Irrigation System Device Bridge", namespace: "DiegoAntonino", author: "Diego Antonino") {
         	capability "bridge"
             capability "Health Check"
             
