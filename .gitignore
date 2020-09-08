@@ -4,3 +4,4 @@
 /SmartThings-Raspberry-Presence_integration-master/python_code/conf.py
 /SmartThings-Raspberry-Alarm_integration-master/python_code/conf.py
 /SmartThings-Raspberry-TV_integration-master/python_code/conf.py
+*.DS_Store

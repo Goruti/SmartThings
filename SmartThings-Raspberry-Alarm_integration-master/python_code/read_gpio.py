@@ -7,10 +7,10 @@ import tools
 
 
 def main():
-    print "GETTING Smartthings IP"
+    print("GETTING Smartthings IP")
     tools.get_smartthing_ip()
 
-    print "Going to the main process"
+    print("Going to the main process")
     GPIO.setmode(GPIO.BCM)
     #channels = [12, 16, 20, 21]  # pins 32, 36, 38, 40
     #channel_names = ['zone01', 'zone02', 'zone03', 'zone04']
@@ -32,7 +32,7 @@ def main():
     for pin in channels:
         alarm.update({channel_def.get(pin): status_names[GPIO.input(pin)]})
 
-    print "Initial State: {}".format(alarm)
+    print("Initial State: {}".format(alarm))
     for key, value in alarm.iteritems():
         tools.send_event_to_st(json.dumps({
             'type': 'alarm_status',
@@ -50,8 +50,8 @@ def main():
             time.sleep(configuration["SLEEP_TIME"])
 
     except (Exception, KeyboardInterrupt, SystemExit):
-        print "\nEnding Loop"
-        print "Cleaning GPIO"
+        print("\nEnding Loop")
+        print("Cleaning GPIO")
         GPIO.cleanup()           # clean up GPIO on normal exit
 
 
