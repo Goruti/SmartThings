@@ -67,8 +67,8 @@ def initialize(){
 def newConfigurationTrigger(evt){
     log.debug "newConfigurationTrigger - got evt.value: ${evt.value}"
     uninstalled()
-    //add childs
-    //addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName1.toLowerCase(), theHub.id, [label: presenceName1, name: presenceName1])
+    //add Children
+    createChildren()
 }
 
 def deleteConfigurationTrigger(evt){
@@ -76,6 +76,12 @@ def deleteConfigurationTrigger(evt){
     uninstalled()
 }
 //############## TV SETUP #############
+def createChildren(evt) {
+    log.console "Creating Children - evt: ${evt}"
+    log.console "Creating Children - evt.value: ${evt.value}"
+    //addChildDevice("DiegoAntonino", "Virtual Pant Sensor", "virtual_pant_" + presenceName1.toLowerCase(), theHub.id, [label: presenceName1, name: presenceName1])
+
+}
 def initTv() {
     if (tv_ip && blu_ray_ip && flask_ip && flask_port) {
         //subscribe

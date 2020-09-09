@@ -59,7 +59,7 @@ def updated() {
 }
 
 def uninstalled() {
-  delete_childs()
+  delete_children()
 }
 
 // NOP implementation of ping as health check only calls this for tracked devices
@@ -118,16 +118,16 @@ def parse(String description){
 
 }
 // ------------------------------------------------------------------
-def createChilds(body) {
+def createChildren(body) {
 	log.debug "creating Childs"
 }
 
 // ------------------------------------------------------------------
 
-def delete_childs() {
+def delete_children() {
 	log.debug "deleting Childs"
-    def childs = getChildDevices()
-    childs.each {
+    def children = getChildDevices()
+    children.each {
     	deleteChildDevice(it.deviceNetworkId)
     }
 }
