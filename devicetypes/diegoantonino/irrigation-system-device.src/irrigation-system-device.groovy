@@ -93,7 +93,7 @@ def parse(String description){
 
         case "system_configuration":
             log.debug "trigger system_configuration event: ${content.body}"
-            if (content.body.status === "enabled") {
+            if (content.body.status == "enabled") {
                 sendEvent(name: "ssid", value: "${content.body.ssid}")
                 sendEvent(name: "ip", value: "${content.body.ip}")
                 sendEvent(name: "total_pumps", value: "${content.body.system.total_pumps}")
