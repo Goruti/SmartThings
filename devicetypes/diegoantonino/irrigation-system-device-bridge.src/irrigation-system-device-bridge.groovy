@@ -104,11 +104,11 @@ def parse(String description){
                 sendEvent(name: "ssid", value: "${content.body.ssid}")
                 sendEvent(name: "ip", value: "${content.body.ip}")
                 sendEvent(name: "total_pumps", value: "${content.body.system.total_pumps}")
-                //createEvent(name: "newSystemConfiguration", value: "${content.body}")
-                createChilds(content.body)
+                createEvent(name: "newSystemConfiguration", value: "${content.body}")
+                //createChilds(content.body)
             } else {
-                //createEvent(name: "deleteSystemConfiguration", value: "${content.body}")
-                uninstalled()
+                createEvent(name: "deleteSystemConfiguration", value: "${content.body}")
+                //uninstalled()
             }
             break
             
