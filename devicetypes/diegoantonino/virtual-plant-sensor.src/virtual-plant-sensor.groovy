@@ -17,9 +17,6 @@ metadata {
   definition (name: "Virtual Pant Sensor", namespace: "DiegoAntonino", author: "Diego Antonino") {
     capability "switch"
     capability "temperatureMeasurement"
-    
-    command "open"
-    command "close"
 
   }
 
@@ -28,13 +25,15 @@ metadata {
   }
 
   tiles {
-		standardTile("switch", "device.switch", width: 2, height: 2, canChangeIcon: true) {
-			state "off", label: '${name}', action: "switch.on", icon: "st.switches.switch.off", backgroundColor: "#ffffff"
-			state "on", label: '${name}', action: "switch.off", icon: "st.switches.switch.on", backgroundColor: "#00A0DC"
-		}
-		valueTile("moisture", "device.temperature", decoration: "flat", width: 1, height: 1) {
-            state  "value", label:'moisture Value\n\n${currentValue}'
+		standardTile("switch", "device.switch", inactiveLabel: true,  width: 6, height: 4) {
+          state "off", label: '${name}', action: "on", icon: "st.Electronics.electronics18", backgroundColor: "#ffffff", nextState:"turningOn"
+          state "on", label: '${name}', action: "off", icon: "st.Electronics.electronics18", backgroundColor: "#00a0dc", nextState:"turningOff"
+          state "turningOn", label:'Turning on', icon:"st.Electronics.electronics18", backgroundColor:"#00a0dc", nextState: "on"
+    	  state "turningOff", label:'Turning off', icon:"st.Electronics.electronics18", backgroundColor:"#ffffff", nextState: "off"
         }
+		//valueTile("moisture", "device.temperature", decoration: "flat", width: 1, height: 1) {
+        //    state  "value", label:'Moisture Value\n\n${currentValue}'
+        //}
 		main "moisture"
 		details ["moisture", "switch"]
 	}
@@ -45,7 +44,7 @@ def parse(String description) {
   log.debug "Virtual Switch Parsing '${description}'"
     // initialize to closed state
     if (description == "updated") {
-      sendEvent(name: "switch", value: "closed")
+      sendEvent(name: "switch", value: "off")
     }
 }
 
