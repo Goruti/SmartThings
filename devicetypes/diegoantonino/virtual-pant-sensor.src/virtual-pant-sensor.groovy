@@ -32,8 +32,12 @@ metadata {
     	  state "turningOff", label:'Turning off', icon:"st.Electronics.electronics18", backgroundColor:"#ffffff", nextState: "off"
         }
 
+        valueTile("moisture", "device.temperature", decoration: "flat", width: 1, height: 1) {
+		  state  "value", label:'Moisture Value\n\n${currentValue}'
+	    }
+
 		main "switch"
-		//details ["moisture", "switch"]
+		details ["moisture", "switch"]
 	}
 }
 
