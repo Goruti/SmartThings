@@ -58,6 +58,10 @@ def updated() {
 	updateSettings()
 }
 
+def uninstalled() {
+  delete_childs()
+}
+
 // NOP implementation of ping as health check only calls this for tracked devices
 // But as capability defines this method it's implemented to avoid MissingMethodException
 def ping() {
@@ -69,7 +73,10 @@ def ping() {
 }
 
 def updateSettings(){
-    setDeviceNetworkId(esp32_mac)
+	if (esp32_mac) {
+    	setDeviceNetworkId(esp32_mac)
+    }
+    
 }
 
 // ------------------------------------------------------------------
@@ -98,8 +105,10 @@ def parse(String description){
                 sendEvent(name: "ip", value: "${content.body.ip}")
                 sendEvent(name: "total_pumps", value: "${content.body.system.total_pumps}")
                 //createEvent(name: "newSystemConfiguration", value: "${content.body}")
+                createChilds(content.body)
             } else {
-                createEvent(name: "deleteSystemConfiguration", value: "${content.body}")
+                //createEvent(name: "deleteSystemConfiguration", value: "${content.body}")
+                uninstalled()
             }
             break
             
@@ -107,6 +116,20 @@ def parse(String description){
             log.debug "event type '${content.type}' is not defined"
     }
 
+}
+// ------------------------------------------------------------------
+def createChilds(body) {
+	log.debug "creating Childs"
+}
+
+// ------------------------------------------------------------------
+
+def delete_childs() {
+	log.debug "deleting Childs"
+    def childs = getChildDevices()
+    childs.each {
+    	deleteChildDevice(it.deviceNetworkId)
+    }
 }
 
 // ------------------------------------------------------------------
