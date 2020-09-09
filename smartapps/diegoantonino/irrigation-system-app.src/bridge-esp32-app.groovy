@@ -39,14 +39,12 @@ preferences {
 
 }
 
-def installed()
-{
+def installed() {
 	log.debug "Installed with settings: ${settings}"
 	initialize()
 }
 
-def updated()
-{
+def updated() {
 	log.debug "Updated with settings: ${settings}"
 	uninstalled()
 	initialize()
@@ -60,25 +58,23 @@ def uninstalled() {
 }
 
 def initialize(){
-	initNewConfig()
-    initSystem()
-}
-
-//############## NEW CONFIGURATION SETUP #############
-def initNewConfig() {
-	//subscribe
     subscribe(irrigationSystemBridge, "newSystemConfiguration", newConfigurationTrigger)
-}
+    subscribe(irrigationSystemBridge, "deleteSystemConfiguration", deleteConfigurationTrigger)
+    subscribe(irrigationSystemBridge, "waterLevelStatus", waterLevelStatus)
+    subscribe(irrigationSystemBridge, "moistureStatus", moistureStatus)}
 
-//define new configuration trigger
+//############## SUBSCRIPTION FUNCTIONS #############
 def newConfigurationTrigger(evt){
-    log.debug "got evt.value: ${evt.value}"
+    log.debug "newConfigurationTrigger - got evt.value: ${evt.value}"
     uninstalled()
     //add childs
     //addChildDevice("DiegoAntonino", "Virtual Presence Sensor", "virtual_beacon_" + presenceName1.toLowerCase(), theHub.id, [label: presenceName1, name: presenceName1])
-
 }
 
+def deleteConfigurationTrigger(evt){
+    log.debug "deleteConfigurationTrigger - got evt.value: ${evt.value}"
+    uninstalled()
+}
 //############## TV SETUP #############
 def initTv() {
     if (tv_ip && blu_ray_ip && flask_ip && flask_port) {

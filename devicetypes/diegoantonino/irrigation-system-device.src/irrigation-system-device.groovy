@@ -82,22 +82,25 @@ def parse(String description){
 
     switch (content.type) {
         case "water_level_status":
-            log.debug "trigger water_level_status event"
-            sendEvent(name: "waterLevelStatus", value: "${content.body.status}")
+            log.debug "trigger water_level_status event: ${content.body}"
+            sendEvent(name: "waterLevelStatus", value: "${content.body}")
             break
             
         case "moisture_status":
-            log.debug "trigger moisture_status event"
-            createEvent(name: "moistureStatus", value: "${content.body.sensors_status}")
+            log.debug "trigger moisture_status event: ${content.body}"
+            createEvent(name: "moistureStatus", value: "${content.body}")
             break
 
         case "system_configuration":
-            log.debug "trigger system_configuration event"
-            sendEvent(name: "ssid", value: "${content.body.ssid}")
-            sendEvent(name: "ip", value: "${content.body.ip}")
-            sendEvent(name: "total_pumps", value: "${content.body.system.total_pumps}")
-
-            createEvent(name: "newSystemConfiguration", value: "${content.body.system}")
+            log.debug "trigger system_configuration event: ${content.body}"
+            if (content.body.status === "enabled") {
+                sendEvent(name: "ssid", value: "${content.body.ssid}")
+                sendEvent(name: "ip", value: "${content.body.ip}")
+                sendEvent(name: "total_pumps", value: "${content.body.system.total_pumps}")
+                //createEvent(name: "newSystemConfiguration", value: "${content.body}")
+            } else {
+                //createEvent(name: "deleteSystemConfiguration", value: "${content.body}")
+            }
             break
             
         default:
