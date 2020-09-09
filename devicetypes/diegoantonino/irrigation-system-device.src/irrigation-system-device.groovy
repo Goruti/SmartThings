@@ -99,7 +99,7 @@ def parse(String description){
                 sendEvent(name: "total_pumps", value: "${content.body.system.total_pumps}")
                 //createEvent(name: "newSystemConfiguration", value: "${content.body}")
             } else {
-                //createEvent(name: "deleteSystemConfiguration", value: "${content.body}")
+                createEvent(name: "deleteSystemConfiguration", value: "${content.body}")
             }
             break
             
