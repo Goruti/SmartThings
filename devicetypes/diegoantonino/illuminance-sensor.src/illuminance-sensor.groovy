@@ -22,10 +22,8 @@ preferences {
 metadata {
   definition (name: "Illuminance Sensor", namespace: "DiegoAntonino", author: "Diego Antonino") {
     capability "illuminanceMeasurement"
-    //capability "Sensor"
     capability "Health Check"
     
-	//attribute "illuminance", "number"
     attribute "illuminance_ts", "string"
     attribute "check_in_at", "string"
   }
