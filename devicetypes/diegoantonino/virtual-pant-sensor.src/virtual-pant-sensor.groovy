@@ -15,8 +15,10 @@
  */
 metadata {
   definition (name: "Virtual Pant Sensor", namespace: "DiegoAntonino", author: "Diego Antonino") {
-    capability "switch"
-    capability "temperatureMeasurement"
+    capability "Relative Humidity Measurement"
+	capability "Switch"
+    capability "Actuator"
+    capability "Sensor"
 
   }
 
@@ -25,34 +27,42 @@ metadata {
   }
 
   tiles {
-		standardTile("switch", "device.switch", inactiveLabel: true,  width: 6, height: 4) {
-          state "off", label: '${name}', action: "on", icon: "st.Electronics.electronics18", backgroundColor: "#ffffff", nextState:"turningOn"
-          state "on", label: '${name}', action: "off", icon: "st.Electronics.electronics18", backgroundColor: "#00a0dc", nextState:"turningOff"
-          state "turningOn", label:'Turning on', icon:"st.Electronics.electronics18", backgroundColor:"#00a0dc", nextState: "on"
-    	  state "turningOff", label:'Turning off', icon:"st.Electronics.electronics18", backgroundColor:"#ffffff", nextState: "off"
+		standardTile("switch", "device.switch", width: 6, height: 4) {
+          state "on", label:'${name}', action:"switch.off", icon:"st.Home.home30", backgroundColor:"#00A0DC", nextState:"turningOff"
+          state "off", label:'${name}', action:"switch.on", icon:"st.Home.home30", backgroundColor:"#FFFFFF", nextState:"turningOn", defaultState: true
+          state "turningOn", label:'Turning On', action:"switch.off", icon:"st.Home.home30", backgroundColor:"#00A0DC", nextState:"turningOn"
+          state "turningOff", label:'Turning Off', action:"switch.on", icon:"st.Home.home30", backgroundColor:"#FFFFFF", nextState:"turningOff"
         }
-        valueTile("moisture", "device.temperature", decoration: "flat", width: 1, height: 1) {
+        
+        valueTile("humidity", "device.humidity", decoration: "flat", width: 1, height: 1) {
 		  state  "value", label:'Moisture Value\n\n${currentValue}'
 	    }
 
-		main "moisture"
-		details(["moisture", "switch"])
+		main "humidity"
+		details(["humidity", "switch"])
 	}
 }
+def installed() {
+    updated()
+}
 
+def updated() {
+	off()
+    sendEvent(name: "humidity", value: "40", isStateChange: true)
+}
 // parse events into attributes
 def parse(String description) {
-  log.debug "Virtual Switch Parsing '${description}'"
-    // initialize to closed state
-    if (description == "updated") {
-      sendEvent(name: "switch", value: "off")
-    }
+  // This is a simulated device. No incoming data to parse.
 }
 
 def on() {
-  sendEvent(name: "switch", value: "on")
+	log.debug "Executing 'on'"
+    sendEvent(name: "switch", value: "on", isStateChange: true)
+	// TODO: handle 'open' command
 }
 
 def off() {
-  sendEvent(name: "switch", value: "off")
+	log.debug "Executing 'off'"
+    sendEvent(name: "switch", value: "off", isStateChange: true)
+	// TODO: handle 'close' command
 }
