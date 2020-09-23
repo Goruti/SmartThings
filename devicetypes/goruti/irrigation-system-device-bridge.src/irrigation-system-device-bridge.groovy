@@ -48,7 +48,7 @@ metadata {
 		valueTile("total_pumps", "device.total_pumps", width: 2, height: 1) {
 			state "default", label:'${currentValue}'
 		}
-
+        
 		main('SSID')
 		details(["SSID", "ip", "port", "total_pumps"])
 	}
