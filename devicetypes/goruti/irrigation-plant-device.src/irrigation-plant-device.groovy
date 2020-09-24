@@ -51,7 +51,6 @@ metadata {
 
 def installed() {
 	updateSettings()
-    //sendEvent(name: "humidity", value: "80.2", isStateChange: true)
     sendEvent(name: "switch", value: "off", isStateChange: true)
 }
 
@@ -101,8 +100,11 @@ def parse(String description) {
         def value = parts.length>1?parts[1].trim():null
         
         if (name && value) {
-            // Update device
+        	if (name == "humidity") {
+            	value.round(2)
+            }
             if (device.currentValue(name) != value) {
+            	// Update device
                 log.debug "Updated Attribute: name: ${name}, value: ${value}"
                 sendEvent(name: name, value: value, isStateChange: true)
             }
