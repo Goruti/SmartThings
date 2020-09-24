@@ -31,8 +31,12 @@ metadata {
     
     tiles {
     	standardTile("water", "device.water", decoration: "flat") {
-        	state "dry", label: "Dry", icon:"st.alarm.water.dry", backgroundColor:"#ffffff"
-            state "wet", label: "Wet", icon:"st.alarm.water.wet", backgroundColor:"#53a7c0"
+        	//state "dry", label: "Dry", icon:"st.alarm.water.dry", backgroundColor:"#ffffff"
+            //state "wet", label: "Wet", icon:"st.alarm.water.wet", backgroundColor:"#53a7c0"
+            //appling inverse logic to avoid constants notifications from ST
+            state "dry", label: "Full", icon:"st.alarm.water.wet", backgroundColor:"#53a7c0"
+            state "wet", label: "Empty", icon:"st.alarm.water.dry", backgroundColor:"#ffffff"
+            
 		}
         valueTile("lastActivity", "device.lastActivity", inactiveLabel: false, decoration: "flat", width: 4, height: 1) {
             state "default", label: 'Last Activity: ${currentValue}',icon: "st.Health & Wellness.health9"
@@ -78,7 +82,8 @@ def parse(String description) {
         def value = parts.length>1?parts[1].trim():null
         
         if (name && value) {
-            // Update device
+            // Update device. Invert the logic to avoid constants notifications from ST
+            value = value.replaceAll("good", "dry").replaceAll("empty", "wet")
             if (device.currentValue(name) != value) {
                 log.debug "Updated Attribute: name: ${name}, value: ${value}"
                 sendEvent(name: name, value: value, isStateChange: true)

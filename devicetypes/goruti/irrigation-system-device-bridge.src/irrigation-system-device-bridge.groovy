@@ -22,9 +22,9 @@ preferences {
 
 metadata {
 	definition (name: "Irrigation System Device Bridge", namespace: "Goruti", author: "Diego Antonino", cstHandler: true) {
-        	capability "bridge"
-            capability "Refresh"
+        	capability "Bridge"
             capability "Health Check"
+            capability "Refresh"
             
             attribute "ip", "string"
             attribute "ssid", "string"
@@ -174,8 +174,8 @@ def refresh_devices(status) {
     // Update Virtual Water Tank    
     def waterTankDevice = childDevices.find{ d -> d.deviceNetworkId == "${device.deviceNetworkId}-watertank"}
     if (waterTankDevice) {
-        def level_status = status.water_level.replaceAll("good", "wet").replaceAll("empty", "dry")
-        waterTankDevice.parse("water:${level_status}")
+        //def level_status = status.water_level.replaceAll("good", "dry").replaceAll("empty", "wet")
+        waterTankDevice.parse("water:${status.water_level}")
     }
     else {
     	log.error "no child device found: ${device.deviceNetworkId}-watertank"
@@ -204,8 +204,8 @@ def update_water_status(level) {
 	log.debug "trigger water_level_status event: ${level}"
     def waterTankDevice = childDevices.find{ d -> d.deviceNetworkId == "${device.deviceNetworkId}-watertank"}
     if (waterTankDevice) {
-    	def level_status = level.status.replaceAll("good", "wet").replaceAll("empty", "dry")
-    	waterTankDevice.parse("water:${level_status}")
+    	//def level_status = level.status.replaceAll("good", "dry").replaceAll("empty", "wet")
+    	waterTankDevice.parse("water:${level.status}")
     }
     else {
     	log.error "no child device found: ${device.deviceNetworkId}-watertank"
