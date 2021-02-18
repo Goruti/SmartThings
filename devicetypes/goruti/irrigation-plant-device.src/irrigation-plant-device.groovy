@@ -101,7 +101,7 @@ def parse(String description) {
         
         if (name && value) {
         	if (name == "humidity") {
-            	value.round(1)
+            	value = Float.valueOf(value).round(1)
             }
             if (device.currentValue(name) != value) {
             	// Update device
