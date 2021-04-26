@@ -14,7 +14,7 @@
  */
 metadata {
 	definition (name: "Irrigation Plant Device", namespace: "Goruti", author: "Diego Antonino", cstHandler: true) {
-		capability "Relative Humidity Measurement"
+		capability "Temperature Measurement"
 		capability "Switch"
         capability "Sensor"
         capability "Refresh"
@@ -36,16 +36,16 @@ metadata {
                 }
             }
             
-			valueTile("humidity", "device.humidity", inactiveLabel: false, width: 2, height: 2) {
-                state "humidity", label: '${currentValue}% humidity', unit: ""
+			valueTile("temperature", "device.temperature", inactiveLabel: false, width: 2, height: 2) {
+                state "temperature", label: '${currentValue}'
             }
             
             standardTile("lastActivity", "device.lastActivity", inactiveLabel: false, decoration: "flat", width: 4, height: 1) {
                 state "default", label: 'Last Activity: ${currentValue}',icon: "st.Health & Wellness.health9"
             }
 
-            main "humidity"
-            details(["humidity", "switch", "lastActivity"])
+            main "temperature"
+            details(["temperature", "switch", "lastActivity"])
 	}
 }
 
@@ -100,13 +100,16 @@ def parse(String description) {
         def value = parts.length>1?parts[1].trim():null
         
         if (name && value) {
-        	if (name == "humidity") {
+        	if (name == "moisture") {
             	value = Float.valueOf(value).round(1)
+                //value = Integer.valueOf(value)
+                name = "temperature"
             }
             if (device.currentValue(name) != value) {
             	// Update device
                 log.debug "Updated Attribute: name: ${name}, value: ${value}"
-                sendEvent(name: name, value: value, isStateChange: true)
+                sendEvent(name: name, value: value, unit: "C", isStateChange: true)
+                //sendEvent(name: name, value: value, isStateChange: true)
             }
     	}
     }

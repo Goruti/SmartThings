@@ -107,7 +107,7 @@ def parse(String description){
             break
             
         case "moisture_status":
-            update_status(content.body, "humidity")
+            update_status(content.body, "moisture")
             break
        
         case "pump_status":
@@ -163,7 +163,7 @@ def refresh_devices(status) {
     	def plantDevice = childDevices.find{ d -> d.deviceNetworkId == "${device.deviceNetworkId}-${value.connected_to_port}"}
 		
         if (plantDevice) {
-        	plantDevice.parse("humidity:${value.humidity}, switch:${value.pump_status}")
+        	plantDevice.parse("moisture:${value.moisture}, switch:${value.pump_status}")
 		}
         else {
         	log.error "no child device found: ${device.deviceNetworkId}-${value.connected_to_port}"
@@ -272,7 +272,7 @@ def deleteAllChildDevices() {
     	try {
             deleteChildDevice(dev.deviceNetworkId)
         } catch (e) {
-            log.error "SmartThings may have issues trying to delete the child device when it is in use. Need to manually delete them."
+            log.error "Error deleting ${dev.deviceNetworkId}: ${e}"
         }
     }
 }
