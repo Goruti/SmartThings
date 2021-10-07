@@ -97,53 +97,58 @@ def updateSettings(){
 // ------------------------------------------------------------------
 def parse(String description){    
     def msg = parseLanMessage(description)
-    def content = msg.json
+    def body = msg.json
 
-    log.debug "received: ${content}"
+    log.debug "received: ${body}"
+	
+    body.each { content ->
+    	try {
+            switch (content.type) {
+                case "water_level_status":
+                    update_water_status(content.body)
+                    break
 
-    switch (content.type) {
-        case "water_level_status":
-            update_water_status(content.body)
-            break
-            
-        case "moisture_status":
-            update_status(content.body, "moisture")
-            break
-       
-        case "pump_status":
-            update_status(content.body, "switch")
-            break
+                case "moisture_status":
+                    update_status(content.body, "moisture")
+                    break
 
-        case "system_configuration":
-            log.debug "trigger system_configuration event: ${content.body}"
-            if (content.body.status == "enabled") {
-                sendEvent(name: "ssid", value: "${content.body.ssid}")
-                sendEvent(name: "ip", value: "${content.body.ip}")
-                sendEvent(name: "port", value: "80")
-                sendEvent(name: "total_pumps", value: "${content.body.system.total_pumps}")
-                createChildDevices(content.body.system)
-                // Refresh system status
-       			refresh()
-            } else {
-                log.debug "Disable ST integration. Deleting Child Devices"
-                uninstalled()
+                case "pump_status":
+                    update_status(content.body, "switch")
+                    break
+
+                case "system_configuration":
+                    log.debug "trigger system_configuration event: ${content.body}"
+                    if (content.body.status == "enabled") {
+                        sendEvent(name: "ssid", value: "${content.body.ssid}")
+                        sendEvent(name: "ip", value: "${content.body.ip}")
+                        sendEvent(name: "port", value: "80")
+                        sendEvent(name: "total_pumps", value: "${content.body.system.total_pumps}")
+                        createChildDevices(content.body.system)
+                        // Refresh system status
+                        refresh()
+                    } else {
+                        log.debug "Disable ST integration. Deleting Child Devices"
+                        uninstalled()
+                    }
+                    break
+                case "refresh":
+                    refresh_devices(content.body)
+                    break
+                case "system_test":
+                    start_irrigation_update(content.body)
+                    break
+                default:
+                    log.error "event type '${content.type}' is not defined"
             }
-            break
-        case "refresh":
-        	refresh_devices(content.body)
-            break
-        case "system_test":
-            strat_irrigation_update(content.body)
-            break
-        default:
-            log.error "event type '${content.type}' is not defined"
+        } catch (e) {
+            log.error "Error procesing income message: ${e}"
+        }
     }
-
 }
 
 // ------------------------------------------------------------------
-def strat_irrigation_update(status) {
-	log.debug "trigger strat_irrigation_update event: ${status}"
+def start_irrigation_update(status) {
+	log.debug "trigger start_irrigation_update event: ${status}"
     def systemDevice = childDevices.find{ d -> d.deviceNetworkId == "${device.deviceNetworkId}-systemdevice"}
     
     if (systemDevice) {
